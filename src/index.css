@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-cream: #F8F5EB;
+    --bg-cream-card: #FFFFFF;
+    --bg-cream-hover: #F2EBDA;
+    --bg-cream-subtle: #ECE4D2;
+    --border-cream: #EDE4D0;
+    --border-cream-dark: #DDD2BA;
+    --text-primary: #1D2417;
+    --text-secondary: #575D4E;
+    --text-muted: #8B9080;
+    --brand-sapgreen: #486B2C;
+    --brand-sapgreen-deep: #324B1E;
+    --brand-sapgreen-light: #EAF2E4;
+    --brand-sapgreen-border: #D3E3C9;
+    --brand-ochre: #C68A2C;
+    --brand-ochre-deep: #8E5B13;
+    --brand-ochre-light: #FBF3DC;
+    --brand-ochre-border: #EEDDB8;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #F8F5EB;
+  color: #1D2417;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Sap Green & Crème Ochre scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(142, 91, 19, 0.2);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(72, 107, 44, 0.4);
+}
+
+/* Dynamic Island Animations */
+.dynamic-island-transition {
+  transition: all 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes island-pop {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.8;
+  }
+  60% {
+    transform: scale(1.02);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-island-pop {
+  animation: island-pop 350ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.25);
+  }
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

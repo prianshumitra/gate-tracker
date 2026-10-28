@@ -1,0 +1,936 @@
+import React, { useState, useMemo } from 'react';
+import { useApp } from '../context/AppContext';
+import { buildContributionHeatmap, HeatmapDay, MILESTONES_CONFIG } from '../utils/streak';
+import { getLocalDateString, formatHumanDate, formatRelativeDate, addDays, diffInDays } from '../utils/date';
+import {
+  Flame,
+  Calendar as CalendarIcon,
+  Award,
+  ChevronLeft,
+  ChevronRight,
+  CheckCircle2,
+  Clock,
+  RotateCcw,
+  AlertTriangle,
+  ArrowRight,
+  Sparkles,
+  Filter,
+  Check,
+  BookOpen,
+  CalendarDays,
+  Trophy,
+  Activity,
+  Zap,
+  Target
+} from 'lucide-react';
+import { ActivityLogEntry, StreakMilestone } from '../types';
+import { FlatTopicWithSubject } from '../utils/revision';
+import { playRevisionSound, playCheckSound, playFanfareSound } from '../utils/sound';
+import { fireConfetti } from '../utils/gamification';
+
+export const CalendarView: React.FC = () => {
+  const {
+    activityLogs,
+    streakStats,
+    flatTopics,
+    settings,
+    completeRevision,
+    postponeRevision,
+    triggerIslandNotification,
+    setActiveTab,
+    setSelectedSubjectId
+  } = useApp();
+
+  const todayStr = getLocalDateString();
+  const [selectedDate, setSelectedDate] = useState<string>(todayStr);
+  const [currentCalendarDate, setCurrentCalendarDate] = useState<Date>(new Date());
+  const [hoveredDay, setHoveredDay] = useState<HeatmapDay | null>(null);
+  const [calendarFilter, setCalendarFilter] = useState<'all' | 'due' | 'completed' | 'revisions'>('all');
+  const [viewMode, setViewMode] = useState<'month' | 'heatmap' | 'agenda'>('month');
+
+  // Heatmap data: 52 weeks
+  const { weeks, totalActivities } = useMemo(
+    () => buildContributionHeatmap(activityLogs, todayStr),
+    [activityLogs, todayStr]
+  );
+
+  // Month Calendar Grid calculation
+  const year = currentCalendarDate.getFullYear();
+  const month = currentCalendarDate.getMonth(); // 0 to 11
+
+  const firstDayOfMonth = new Date(year, month, 1);
+  const startingDayOfWeek = firstDayOfMonth.getDay(); // 0 is Sunday
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  // Mapping logs by date for fast lookup
+  const logsByDate = useMemo(() => {
+    const map = new Map<string, ActivityLogEntry[]>();
+    activityLogs.forEach((log: ActivityLogEntry) => {
+      const arr = map.get(log.date) || [];
+      arr.push(log);
+      map.set(log.date, arr);
+    });
+    return map;
+  }, [activityLogs]);
+
+  // Scheduled revisions lookup
+  const scheduledByDate = useMemo(() => {
+    const map = new Map<string, FlatTopicWithSubject[]>();
+    flatTopics.forEach((item: FlatTopicWithSubject) => {
+      if (item.topic.nextRevisionAt) {
+        const arr = map.get(item.topic.nextRevisionAt) || [];
+        arr.push(item);
+        map.set(item.topic.nextRevisionAt, arr);
+      }
+    });
+    return map;
+  }, [flatTopics]);
+
+  // Selected date logs and scheduled
+  const selectedDateLogs = logsByDate.get(selectedDate) || [];
+  const selectedDateScheduled = scheduledByDate.get(selectedDate) || [];
+
+  // Month navigation
+  const prevMonth = () => {
+    setCurrentCalendarDate(new Date(year, month - 1, 1));
+  };
+  const nextMonth = () => {
+    setCurrentCalendarDate(new Date(year, month + 1, 1));
+  };
+  const jumpToToday = () => {
+    setCurrentCalendarDate(new Date());
+    setSelectedDate(todayStr);
+  };
+
+  // Quick revision completion directly from calendar day inspector
+  const handleCompleteRevisionFromCalendar = (item: FlatTopicWithSubject) => {
+    completeRevision(item.subjectId, item.chapterId, item.topic.id, item.topic.confidence);
+    playRevisionSound(settings.soundEnabled);
+    triggerIslandNotification({
+      title: 'Revision Completed! ↻',
+      subtitle: `${item.topic.name} (${item.subjectCode})`,
+      type: 'revision'
+    });
+    if ((item.topic.revisionCount + 1) % 3 === 0) {
+      fireConfetti();
+      playFanfareSound(settings.soundEnabled);
+    }
+  };
+
+  // Postpone revision shortcut
+  const handlePostpone = (item: FlatTopicWithSubject, days: number) => {
+    postponeRevision(item.subjectId, item.chapterId, item.topic.id, days);
+    playCheckSound(settings.soundEnabled);
+    triggerIslandNotification({
+      title: `Postponed +${days}d`,
+      subtitle: `${item.topic.name}`,
+      type: 'info'
+    });
+  };
+
+  // Heatmap intensity color styling
+  const getIntensityColor = (level: number, isSelected: boolean) => {
+    if (isSelected) {
+      return 'ring-2 ring-[#C68A2C] scale-110 z-10 shadow-sm border-transparent';
+    }
+    switch (level) {
+      case 0:
+        return 'bg-[#F4EFE6] dark:bg-stone-800/60 border-[#E8DFC8] dark:border-stone-700/60 hover:border-[#C68A2C]';
+      case 1:
+        return 'bg-[#DCECD1] dark:bg-[#344E22] border-[#C3DCB3] dark:border-[#42642B]';
+      case 2:
+        return 'bg-[#A3CD8B] dark:bg-[#486B2C] border-[#8CB973] dark:border-[#588137] text-white';
+      case 3:
+        return 'bg-[#679B45] dark:bg-[#5D8B39] border-[#558237] dark:border-[#70A546] text-white';
+      case 4:
+        return 'bg-[#385522] dark:bg-[#6FA444] border-[#2B4219] dark:border-[#82BD52] text-white font-bold';
+      default:
+        return 'bg-[#F4EFE6] dark:bg-stone-800/60 border-[#E8DFC8] dark:border-stone-700/60';
+    }
+  };
+
+  // Calculate monthly stats
+  const currentMonthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
+  const monthlyLogs = activityLogs.filter(l => l.date.startsWith(currentMonthPrefix));
+  const monthlyCompleted = monthlyLogs.filter(l => l.type === 'topic_completed').length;
+  const monthlyRevised = monthlyLogs.filter(l => l.type === 'revision_completed').length;
+  const monthlyActiveDays = new Set(monthlyLogs.map(l => l.date)).size;
+
+  // Next Milestone progress
+  const nextMilestone = streakStats.milestones.find(m => m.unlockedAt === null);
+  const prevMilestoneDays = streakStats.milestones
+    .filter(m => m.unlockedAt !== null)
+    .slice(-1)[0]?.days || 0;
+  const milestoneTargetDays = nextMilestone ? nextMilestone.days : streakStats.longestStreak;
+  const milestoneProgressPct = nextMilestone
+    ? Math.min(
+        100,
+        Math.round(
+          ((streakStats.currentStreak - prevMilestoneDays) /
+            Math.max(1, milestoneTargetDays - prevMilestoneDays)) *
+            100
+        )
+      )
+    : 100;
+
+  // Agenda view items (next 14 days)
+  const agendaDates = useMemo(() => {
+    const list: string[] = [];
+    for (let i = 0; i < 14; i++) {
+      list.push(addDays(todayStr, i));
+    }
+    return list;
+  }, [todayStr]);
+
+  return (
+    <div className="space-y-8 animate-in fade-in duration-300">
+      {/* Executive Header Banner */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#EDE4D0] dark:border-stone-800">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#EAF2E4] dark:bg-[#486B2C]/20 text-[#385522] dark:text-[#EAF2E4] border border-[#D3E3C9] dark:border-[#486B2C]/40">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#486B2C] animate-pulse" />
+              Real-time Spaced Repetition Engine
+            </span>
+            <span className="text-xs text-stone-400">•</span>
+            <span className="text-xs text-stone-500 font-medium">GATE Exam Prep Calendar</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1D2417] dark:text-stone-100 tracking-tight font-serif flex items-center gap-2.5">
+            <CalendarIcon className="w-6 h-6 text-[#486B2C]" />
+            Study Activity & Schedule
+          </h2>
+          <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-400 mt-1 max-w-2xl">
+            Track daily revision retention, schedule upcoming spaced review cycles, and monitor your 52-week habit heatmap.
+          </p>
+        </div>
+
+        {/* View Switcher Tabs */}
+        <div className="flex items-center gap-1 p-1 bg-[#F1EADA] dark:bg-stone-900 rounded-xl border border-[#EDE4D0] dark:border-stone-800 text-xs font-semibold self-start md:self-auto shadow-xs">
+          <button
+            onClick={() => setViewMode('month')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+              viewMode === 'month'
+                ? 'bg-[#486B2C] text-white shadow-xs font-bold'
+                : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
+            }`}
+          >
+            <CalendarDays className="w-3.5 h-3.5" />
+            <span>Monthly Grid</span>
+          </button>
+          <button
+            onClick={() => setViewMode('heatmap')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+              viewMode === 'heatmap'
+                ? 'bg-[#486B2C] text-white shadow-xs font-bold'
+                : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
+            }`}
+          >
+            <Activity className="w-3.5 h-3.5" />
+            <span>52-Week Matrix</span>
+          </button>
+          <button
+            onClick={() => setViewMode('agenda')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+              viewMode === 'agenda'
+                ? 'bg-[#486B2C] text-white shadow-xs font-bold'
+                : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
+            }`}
+          >
+            <Clock className="w-3.5 h-3.5" />
+            <span>14-Day Agenda</span>
+          </button>
+        </div>
+      </div>
+
+      {/* 4 Top KPI Habit & Momentum Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Streak Card */}
+        <div className="p-4 rounded-2xl bg-white dark:bg-stone-900 border border-[#EDE4D0] dark:border-stone-800 shadow-[0_2px_8px_rgba(40,30,20,0.03)] flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-bold text-stone-500 uppercase tracking-wider">Current Streak</span>
+            <div className="p-1.5 rounded-lg bg-[#FBF3DC] dark:bg-[#C68A2C]/20 border border-[#EEDDB8] dark:border-[#C68A2C]/30 text-[#8E5B13] dark:text-[#EEDDB8]">
+              <Flame className="w-4 h-4 fill-[#C68A2C] text-[#C68A2C] animate-pulse" />
+            </div>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-extrabold text-[#1D2417] dark:text-stone-100 font-serif">
+              {streakStats.currentStreak}
+            </span>
+            <span className="text-xs font-semibold text-stone-500">Consecutive Days</span>
+          </div>
+          <div className="mt-3 pt-2.5 border-t border-[#EDE4D0]/70 dark:border-stone-800 flex items-center justify-between text-[11px]">
+            <span className="text-stone-500">Record: <strong>{streakStats.longestStreak} days</strong></span>
+            <span className={`font-bold px-1.5 py-0.5 rounded-md ${
+              streakStats.isActiveToday
+                ? 'bg-[#EAF2E4] text-[#385522] border border-[#D3E3C9]'
+                : 'bg-[#FBF3DC] text-[#8E5B13] border border-[#EEDDB8]'
+            }`}>
+              {streakStats.isActiveToday ? '✓ Active Today' : '⏳ Pending Today'}
+            </span>
+          </div>
+        </div>
+
+        {/* Milestone Tracker Card */}
+        <div className="p-4 rounded-2xl bg-white dark:bg-stone-900 border border-[#EDE4D0] dark:border-stone-800 shadow-[0_2px_8px_rgba(40,30,20,0.03)] flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-bold text-stone-500 uppercase tracking-wider">Next Milestone</span>
+            <div className="p-1.5 rounded-lg bg-[#EAF2E4] dark:bg-[#486B2C]/20 border border-[#D3E3C9] dark:border-[#486B2C]/30 text-[#486B2C]">
+              <Award className="w-4 h-4" />
+            </div>
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5 font-bold text-base text-[#1D2417] dark:text-stone-100 truncate">
+              <span>{nextMilestone?.badge || '🏆'}</span>
+              <span>{nextMilestone?.title || 'All Milestones Achieved!'}</span>
+            </div>
+            <div className="text-xs text-stone-500 mt-0.5">
+              {nextMilestone
+                ? `${Math.max(0, nextMilestone.days - streakStats.currentStreak)} days remaining to reach ${nextMilestone.days}d`
+                : 'Peak habit consistency unlocked!'}
+            </div>
+          </div>
+          <div className="mt-3 pt-2.5 border-t border-[#EDE4D0]/70 dark:border-stone-800">
+            <div className="w-full h-1.5 bg-[#EDE4D0] dark:bg-stone-800 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-[#486B2C] rounded-full transition-all duration-700"
+                style={{ width: `${milestoneProgressPct}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Monthly Activity Card */}
+        <div className="p-4 rounded-2xl bg-white dark:bg-stone-900 border border-[#EDE4D0] dark:border-stone-800 shadow-[0_2px_8px_rgba(40,30,20,0.03)] flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-bold text-stone-500 uppercase tracking-wider">
+              {currentCalendarDate.toLocaleDateString('en-US', { month: 'short' })} Activity
+            </span>
+            <div className="p-1.5 rounded-lg bg-[#F8F5EB] dark:bg-stone-800 border border-[#EDE4D0] dark:border-stone-700 text-[#486B2C]">
+              <Zap className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-extrabold text-[#1D2417] dark:text-stone-100 font-serif">
+              {monthlyLogs.length}
+            </span>
+            <span className="text-xs font-semibold text-stone-500">Actions Logged</span>
+          </div>
+          <div className="mt-3 pt-2.5 border-t border-[#EDE4D0]/70 dark:border-stone-800 flex items-center justify-between text-[11px] text-stone-500">
+            <span>{monthlyCompleted} Completed</span>
+            <span>•</span>
+            <span>{monthlyRevised} Revisions</span>
+            <span>•</span>
+            <span className="font-semibold text-stone-800 dark:text-stone-200">{monthlyActiveDays} Active Days</span>
+          </div>
+        </div>
+
+        {/* Consistency Score Card */}
+        <div className="p-4 rounded-2xl bg-white dark:bg-stone-900 border border-[#EDE4D0] dark:border-stone-800 shadow-[0_2px_8px_rgba(40,30,20,0.03)] flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-bold text-stone-500 uppercase tracking-wider">Weekly Consistency</span>
+            <div className="p-1.5 rounded-lg bg-[#FAF4E4] dark:bg-stone-800 border border-[#EDE4D0] dark:border-stone-700 text-[#8E5B13]">
+              <Target className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-extrabold text-[#486B2C] font-serif">
+              {streakStats.weeklyConsistencyPct}%
+            </span>
+            <span className="text-xs font-semibold text-stone-500">Pace Health</span>
+          </div>
+          <div className="mt-3 pt-2.5 border-t border-[#EDE4D0]/70 dark:border-stone-800 flex items-center justify-between text-[11px]">
+            <span className="text-stone-500">
+              {streakStats.activeDaysThisWeek} of 7 days active
+            </span>
+            <span className="font-bold text-[#486B2C]">
+              {streakStats.weeklyConsistencyPct >= 80 ? '🔥 On Track' : '⚡ Keep Going'}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* 52-Week Contribution Matrix (Always expandable or default when in heatmap mode) */}
+      <div className={`p-6 rounded-2xl bg-white dark:bg-stone-900 border border-[#EDE4D0] dark:border-stone-800 shadow-[0_2px_8px_rgba(40,30,20,0.03)] space-y-4 ${
+        viewMode === 'heatmap' ? 'ring-2 ring-[#486B2C]/40' : ''
+      }`}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="font-extrabold text-base text-[#1D2417] dark:text-stone-100 font-serif">
+                52-Week Study Contribution Matrix
+              </h3>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EAF2E4] text-[#385522] border border-[#D3E3C9]">
+                {totalActivities} Total Actions
+              </span>
+            </div>
+            <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
+              Visual record of all topic completions and spaced repetition reviews across the last 365 days.
+            </p>
+          </div>
+
+          {/* Scale Legend */}
+          <div className="flex items-center gap-2 text-xs text-stone-500">
+            <span>Less</span>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 rounded-xs bg-[#F4EFE6] border border-[#E8DFC8]" title="0 activities" />
+              <div className="w-3 h-3 rounded-xs bg-[#DCECD1] border border-[#C3DCB3]" title="1 activity" />
+              <div className="w-3 h-3 rounded-xs bg-[#A3CD8B] border border-[#8CB973]" title="2-3 activities" />
+              <div className="w-3 h-3 rounded-xs bg-[#679B45] border border-[#558237]" title="4-5 activities" />
+              <div className="w-3 h-3 rounded-xs bg-[#385522] border border-[#2B4219]" title="6+ activities" />
+            </div>
+            <span>More</span>
+          </div>
+        </div>
+
+        {/* Heatmap Grid Container */}
+        <div className="overflow-x-auto pb-2 pt-1">
+          <div className="inline-flex gap-1.5 min-w-[760px]">
+            {/* Days of week labels column */}
+            <div className="flex flex-col gap-1 pr-1 text-[9px] font-semibold text-stone-400 select-none">
+              <div className="h-3.5 flex items-center">Sun</div>
+              <div className="h-3.5 flex items-center">Mon</div>
+              <div className="h-3.5 flex items-center">Tue</div>
+              <div className="h-3.5 flex items-center">Wed</div>
+              <div className="h-3.5 flex items-center">Thu</div>
+              <div className="h-3.5 flex items-center">Fri</div>
+              <div className="h-3.5 flex items-center">Sat</div>
+            </div>
+
+            {/* 52 Weeks Columns */}
+            {weeks.map((week: HeatmapDay[], wIdx: number) => (
+              <div key={wIdx} className="flex flex-col gap-1">
+                {week.map((day: HeatmapDay) => {
+                  const isSelected = day.date === selectedDate;
+                  const isTodayDate = day.isToday;
+
+                  return (
+                    <button
+                      key={day.date}
+                      onClick={() => setSelectedDate(day.date)}
+                      onMouseEnter={() => setHoveredDay(day)}
+                      onMouseLeave={() => setHoveredDay(null)}
+                      className={`w-3.5 h-3.5 rounded-xs border transition-all cursor-pointer relative ${
+                        isTodayDate ? 'ring-2 ring-stone-900 dark:ring-stone-100 font-bold' : ''
+                      } ${getIntensityColor(day.level, isSelected)}`}
+                      title={`${formatHumanDate(day.date)}: ${day.count} activities (${day.completedCount} completed, ${day.revisionCount} revisions)`}
+                    />
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Heatmap Info Footer Bar */}
+        <div className="pt-3 border-t border-[#EDE4D0] dark:border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-stone-600 dark:text-stone-400">
+          <div>
+            {hoveredDay ? (
+              <span className="text-[#1D2417] dark:text-stone-200 font-semibold flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#486B2C]" />
+                <strong>{formatHumanDate(hoveredDay.date)}:</strong>{' '}
+                {hoveredDay.count > 0
+                  ? `${hoveredDay.completedCount} topics completed, ${hoveredDay.revisionCount} revisions`
+                  : 'Rest day / No activity logged'}
+              </span>
+            ) : (
+              <span className="text-stone-500">
+                Hover over any cell for breakdown or click to inspect that day's scheduled tasks below.
+              </span>
+            )}
+          </div>
+
+          <div className="text-[11px] text-stone-500">
+            Selected: <strong className="text-[#1D2417] dark:text-stone-100 font-serif">{formatHumanDate(selectedDate)}</strong>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content Area: Monthly Calendar Grid + Day Inspector Panel */}
+      {viewMode === 'agenda' ? (
+        /* Agenda View: Next 14 Days */
+        <div className="p-6 rounded-2xl bg-white dark:bg-stone-900 border border-[#EDE4D0] dark:border-stone-800 shadow-[0_2px_8px_rgba(40,30,20,0.03)] space-y-6">
+          <div className="flex items-center justify-between pb-3 border-b border-[#EDE4D0] dark:border-stone-800">
+            <div>
+              <h3 className="font-extrabold text-lg text-[#1D2417] dark:text-stone-100 font-serif">
+                14-Day Forward Revision Radar
+              </h3>
+              <p className="text-xs text-stone-500">
+                Upcoming spaced repetition workload and topic schedules
+              </p>
+            </div>
+            <button
+              onClick={() => setViewMode('month')}
+              className="text-xs font-semibold text-[#486B2C] hover:underline"
+            >
+              Back to Month Grid →
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            {agendaDates.map(dateStr => {
+              const scheduled = scheduledByDate.get(dateStr) || [];
+              const logs = logsByDate.get(dateStr) || [];
+              const isTodayDate = dateStr === todayStr;
+
+              return (
+                <div
+                  key={dateStr}
+                  className={`p-4 rounded-xl border transition-all ${
+                    isTodayDate
+                      ? 'bg-[#FBF3DC]/60 dark:bg-[#C68A2C]/10 border-[#EEDDB8] dark:border-[#C68A2C]/40'
+                      : 'bg-[#FAF7F2] dark:bg-stone-950/60 border-[#EDE4D0] dark:border-stone-800'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2.5">
+                      <span className="font-serif font-extrabold text-sm text-[#1D2417] dark:text-stone-100">
+                        {formatHumanDate(dateStr)}
+                      </span>
+                      {isTodayDate && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#C68A2C] text-white">
+                          TODAY
+                        </span>
+                      )}
+                      <span className="text-xs text-stone-500">
+                        ({formatRelativeDate(dateStr)})
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="text-stone-500">
+                        {scheduled.length} Due • {logs.length} Logged
+                      </span>
+                      <button
+                        onClick={() => {
+                          setSelectedDate(dateStr);
+                          setViewMode('month');
+                        }}
+                        className="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-white dark:bg-stone-800 border border-[#EDE4D0] text-stone-700 dark:text-stone-300 hover:bg-[#F8F5EB]"
+                      >
+                        Inspect
+                      </button>
+                    </div>
+                  </div>
+
+                  {scheduled.length === 0 ? (
+                    <div className="text-xs text-stone-400 italic">No scheduled revisions for this date.</div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                      {scheduled.map(item => (
+                        <div
+                          key={item.topic.id}
+                          className="p-2.5 rounded-lg bg-white dark:bg-stone-900 border border-[#EDE4D0] dark:border-stone-800 flex items-center justify-between text-xs"
+                        >
+                          <div className="min-w-0 pr-2">
+                            <div className="font-semibold text-stone-900 dark:text-stone-100 truncate">
+                              {item.topic.name}
+                            </div>
+                            <div className="text-[11px] text-stone-500 truncate">
+                              {item.subjectCode} • {item.chapterName} • Rev #{item.topic.revisionCount + 1}
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => handleCompleteRevisionFromCalendar(item)}
+                            className="shrink-0 px-2 py-1 rounded-md text-[11px] font-bold bg-[#486B2C] hover:bg-[#385522] text-white shadow-xs"
+                          >
+                            Revise
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        /* Standard Month Grid + Day Inspector (2 columns) */
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Left Column: Calendar View (7 cols) */}
+          <div className="lg:col-span-7 p-6 rounded-2xl bg-white dark:bg-stone-900 border border-[#EDE4D0] dark:border-stone-800 shadow-[0_2px_8px_rgba(40,30,20,0.03)] space-y-4">
+            {/* Calendar Month Header Controls */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#EDE4D0] dark:border-stone-800">
+              <div className="flex items-center gap-3">
+                <h3 className="font-extrabold text-xl text-[#1D2417] dark:text-stone-100 font-serif">
+                  {currentCalendarDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                </h3>
+                <button
+                  onClick={jumpToToday}
+                  className="px-2.5 py-1 text-xs font-bold rounded-lg bg-[#FAF4E4] hover:bg-[#F6E3B4] dark:bg-stone-800 text-[#8E5B13] dark:text-stone-300 border border-[#EEDDB8] dark:border-stone-700 transition-colors shadow-xs"
+                >
+                  Today
+                </button>
+              </div>
+
+              {/* Month Navigation & Filter */}
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 bg-[#FAF7F2] dark:bg-stone-800/80 p-0.5 rounded-xl border border-[#EDE4D0] dark:border-stone-700">
+                  <button
+                    onClick={() => setCalendarFilter('all')}
+                    className={`px-2 py-1 rounded-lg text-[11px] font-semibold transition-all ${
+                      calendarFilter === 'all'
+                        ? 'bg-[#486B2C] text-white'
+                        : 'text-stone-500 hover:text-stone-800'
+                    }`}
+                  >
+                    All
+                  </button>
+                  <button
+                    onClick={() => setCalendarFilter('due')}
+                    className={`px-2 py-1 rounded-lg text-[11px] font-semibold transition-all ${
+                      calendarFilter === 'due'
+                        ? 'bg-[#C68A2C] text-white'
+                        : 'text-stone-500 hover:text-stone-800'
+                    }`}
+                  >
+                    Due
+                  </button>
+                  <button
+                    onClick={() => setCalendarFilter('completed')}
+                    className={`px-2 py-1 rounded-lg text-[11px] font-semibold transition-all ${
+                      calendarFilter === 'completed'
+                        ? 'bg-[#486B2C] text-white'
+                        : 'text-stone-500 hover:text-stone-800'
+                    }`}
+                  >
+                    Done
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={prevMonth}
+                    className="p-1.5 rounded-lg bg-[#FAF7F2] dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-[#EDE4D0] border border-[#EDE4D0] dark:border-stone-700 transition-colors"
+                    title="Previous Month"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={nextMonth}
+                    className="p-1.5 rounded-lg bg-[#FAF7F2] dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-[#EDE4D0] border border-[#EDE4D0] dark:border-stone-700 transition-colors"
+                    title="Next Month"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Calendar Grid Days of Week */}
+            <div className="grid grid-cols-7 gap-1 text-center text-xs font-bold text-stone-400 uppercase tracking-wider py-1 select-none">
+              <span className="text-[#8E5B13]">Sun</span>
+              <span>Mon</span>
+              <span>Tue</span>
+              <span>Wed</span>
+              <span>Thu</span>
+              <span>Fri</span>
+              <span className="text-[#8E5B13]">Sat</span>
+            </div>
+
+            {/* Month Days Grid */}
+            <div className="grid grid-cols-7 gap-1.5">
+              {/* Blank leading slots */}
+              {Array.from({ length: startingDayOfWeek }).map((_, i) => (
+                <div
+                  key={`blank-${i}`}
+                  className="h-20 rounded-xl bg-[#FAF7F2]/40 dark:bg-stone-950/20 border border-transparent"
+                />
+              ))}
+
+              {/* Days in Month */}
+              {Array.from({ length: daysInMonth }).map((_, i) => {
+                const dayNum = i + 1;
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+                const isSelected = dateStr === selectedDate;
+                const isTodayDate = dateStr === todayStr;
+
+                const logs = logsByDate.get(dateStr) || [];
+                const scheduled = scheduledByDate.get(dateStr) || [];
+
+                const hasCompletions = logs.some((l: ActivityLogEntry) => l.type === 'topic_completed');
+                const hasRevisions = logs.some((l: ActivityLogEntry) => l.type === 'revision_completed');
+                const hasScheduled = scheduled.length > 0;
+                const isOverdueDay = dateStr < todayStr && hasScheduled;
+
+                // Filter check
+                if (calendarFilter === 'due' && !hasScheduled) return null;
+                if (calendarFilter === 'completed' && !hasCompletions) return null;
+
+                return (
+                  <div
+                    key={dateStr}
+                    onClick={() => setSelectedDate(dateStr)}
+                    className={`h-20 p-1.5 rounded-xl border text-xs cursor-pointer flex flex-col justify-between transition-all select-none relative group ${
+                      isSelected
+                        ? 'bg-[#486B2C] text-white border-[#486B2C] shadow-md ring-2 ring-[#486B2C]/30'
+                        : isTodayDate
+                        ? 'bg-[#FBF3DC] dark:bg-[#C68A2C]/20 border-[#C68A2C] text-[#8E5B13] dark:text-[#EEDDB8] font-bold ring-1 ring-[#C68A2C]/40'
+                        : 'bg-white/80 dark:bg-stone-950/60 border-[#EDE4D0] dark:border-stone-800/80 hover:bg-[#F8F5EB] dark:hover:bg-stone-800/50 hover:border-[#DDD2BA] text-stone-700 dark:text-stone-300'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span
+                        className={`text-xs font-bold ${
+                          isSelected
+                            ? 'text-white font-extrabold'
+                            : isTodayDate
+                            ? 'text-[#8E5B13] dark:text-[#EEDDB8] font-black'
+                            : ''
+                        }`}
+                      >
+                        {dayNum}
+                      </span>
+
+                      {/* Small activity dot */}
+                      {logs.length > 0 && (
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full ${
+                            isSelected ? 'bg-white' : 'bg-[#486B2C]'
+                          }`}
+                        />
+                      )}
+                    </div>
+
+                    {/* Micro Indicators */}
+                    <div className="flex flex-col gap-0.5 overflow-hidden">
+                      {hasCompletions && (
+                        <div
+                          className={`text-[9px] truncate px-1 py-0.2 rounded font-medium ${
+                            isSelected
+                              ? 'bg-white/20 text-white'
+                              : 'bg-[#EAF2E4] text-[#385522] border border-[#D3E3C9]'
+                          }`}
+                        >
+                          ✓ {logs.filter(l => l.type === 'topic_completed').length} Done
+                        </div>
+                      )}
+                      {hasRevisions && (
+                        <div
+                          className={`text-[9px] truncate px-1 py-0.2 rounded font-medium ${
+                            isSelected
+                              ? 'bg-white/20 text-white'
+                              : 'bg-[#FBF3DC] text-[#8E5B13] border border-[#EEDDB8]'
+                          }`}
+                        >
+                          ↻ {logs.filter(l => l.type === 'revision_completed').length} Rev
+                        </div>
+                      )}
+                      {hasScheduled && (
+                        <div
+                          className={`text-[9px] truncate px-1 py-0.2 rounded font-medium ${
+                            isSelected
+                              ? 'bg-white/20 text-white'
+                              : isOverdueDay
+                              ? 'bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5]'
+                              : 'bg-[#FAF4E4] text-[#8E5B13] border border-[#EDE4D0]'
+                          }`}
+                        >
+                          {isOverdueDay ? `⚠️ ${scheduled.length} Late` : `⏰ ${scheduled.length} Due`}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Quick Helper Legend */}
+            <div className="pt-2 flex flex-wrap items-center justify-between gap-2 text-[11px] text-stone-500">
+              <div className="flex items-center gap-3">
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-[#486B2C]" /> Done
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-[#C68A2C]" /> Revision
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-red-500" /> Overdue
+                </span>
+              </div>
+              <span>Click any date to inspect details</span>
+            </div>
+          </div>
+
+          {/* Right Column: Day Inspector Panel (5 cols) */}
+          <div className="lg:col-span-5 p-6 rounded-2xl bg-white dark:bg-stone-900 border border-[#EDE4D0] dark:border-stone-800 shadow-[0_2px_8px_rgba(40,30,20,0.03)] space-y-6">
+            {/* Inspector Header */}
+            <div className="pb-3 border-b border-[#EDE4D0] dark:border-stone-800 flex items-center justify-between">
+              <div>
+                <span className="text-[11px] uppercase font-bold tracking-wider text-stone-400">
+                  Day Inspector
+                </span>
+                <h3 className="text-xl font-extrabold text-[#1D2417] dark:text-stone-100 font-serif mt-0.5">
+                  {formatHumanDate(selectedDate)}
+                </h3>
+                <div className="text-xs text-stone-500 mt-0.5">
+                  {formatRelativeDate(selectedDate)}
+                </div>
+              </div>
+
+              {selectedDate === todayStr ? (
+                <span className="text-xs font-bold px-3 py-1 rounded-full bg-[#FBF3DC] text-[#8E5B13] border border-[#EEDDB8]">
+                  Today
+                </span>
+              ) : selectedDate < todayStr ? (
+                <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#FAF7F2] text-stone-500 border border-[#EDE4D0]">
+                  Past Date
+                </span>
+              ) : (
+                <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#EAF2E4] text-[#385522] border border-[#D3E3C9]">
+                  Upcoming
+                </span>
+              )}
+            </div>
+
+            {/* Scheduled Revisions for this date */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-bold text-stone-800 dark:text-stone-200 uppercase tracking-wider flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-[#C68A2C]" />
+                  Revisions Scheduled ({selectedDateScheduled.length})
+                </h4>
+                {selectedDateScheduled.length > 0 && (
+                  <span className="text-[10px] font-semibold text-stone-400">
+                    Spaced Repetition Due
+                  </span>
+                )}
+              </div>
+
+              {selectedDateScheduled.length === 0 ? (
+                <div className="p-4 rounded-xl bg-[#FAF7F2] dark:bg-stone-950/40 border border-[#EDE4D0] dark:border-stone-800/80 text-center text-xs text-stone-500">
+                  No spaced revisions scheduled on this date.
+                </div>
+              ) : (
+                <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1">
+                  {selectedDateScheduled.map((item: FlatTopicWithSubject) => (
+                    <div
+                      key={item.topic.id}
+                      className="p-3 rounded-xl bg-[#FAF7F2] dark:bg-stone-950/60 border border-[#EDE4D0] dark:border-stone-800 flex flex-col gap-2 transition-all hover:border-[#DDD2BA]"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <div className="font-bold text-xs text-stone-900 dark:text-stone-100">
+                            {item.topic.name}
+                          </div>
+                          <div className="text-[11px] text-stone-500">
+                            {item.subjectCode} • {item.chapterName}
+                          </div>
+                        </div>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FBF3DC] text-[#8E5B13] border border-[#EEDDB8] shrink-0">
+                          Rev #{item.topic.revisionCount + 1}
+                        </span>
+                      </div>
+
+                      {/* Action buttons */}
+                      <div className="flex items-center justify-between pt-1 border-t border-[#EDE4D0]/60 dark:border-stone-800/60 text-xs">
+                        <span className="text-[10px] text-stone-400">
+                          Priority: <strong className="capitalize">{item.topic.priority}</strong>
+                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => handlePostpone(item, 1)}
+                            className="px-2 py-1 rounded-md text-[10px] font-semibold bg-white dark:bg-stone-800 border border-[#EDE4D0] text-stone-600 hover:bg-[#F8F5EB]"
+                            title="Postpone by 1 day"
+                          >
+                            +1d
+                          </button>
+                          <button
+                            onClick={() => handleCompleteRevisionFromCalendar(item)}
+                            className="flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#486B2C] hover:bg-[#385522] text-white shadow-xs transition-colors"
+                          >
+                            <Check className="w-3 h-3" />
+                            <span>Mark Revised</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Completed Activities on this date */}
+            <div className="space-y-3 pt-3 border-t border-[#EDE4D0] dark:border-stone-800">
+              <h4 className="text-xs font-bold text-stone-800 dark:text-stone-200 uppercase tracking-wider flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-[#486B2C]" />
+                Completed on this Day ({selectedDateLogs.length})
+              </h4>
+
+              {selectedDateLogs.length === 0 ? (
+                <div className="p-4 rounded-xl bg-[#FAF7F2] dark:bg-stone-950/40 border border-[#EDE4D0] dark:border-stone-800/80 text-center text-xs text-stone-500">
+                  No activity recorded on this day yet.
+                </div>
+              ) : (
+                <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
+                  {selectedDateLogs.map((log: ActivityLogEntry) => (
+                    <div
+                      key={log.id}
+                      className="p-2.5 rounded-xl bg-[#FAF7F2] dark:bg-stone-950/60 border border-[#EDE4D0] dark:border-stone-800 flex items-center justify-between text-xs"
+                    >
+                      <div className="min-w-0 pr-2">
+                        <div className="font-semibold text-stone-900 dark:text-stone-100 truncate">
+                          {log.topicName}
+                        </div>
+                        <div className="text-[11px] text-stone-500 truncate">
+                          {log.subjectName}
+                        </div>
+                      </div>
+                      <span
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
+                          log.type === 'topic_completed'
+                            ? 'bg-[#EAF2E4] text-[#385522] border border-[#D3E3C9]'
+                            : 'bg-[#FBF3DC] text-[#8E5B13] border border-[#EEDDB8]'
+                        }`}
+                      >
+                        {log.type === 'topic_completed' ? '✓ Completed' : '↻ Revised'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Streak Milestones Badges Grid */}
+            <div className="space-y-3 pt-3 border-t border-[#EDE4D0] dark:border-stone-800">
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-bold text-stone-800 dark:text-stone-200 uppercase tracking-wider flex items-center gap-1.5">
+                  <Trophy className="w-4 h-4 text-[#C68A2C]" />
+                  Streak Milestones
+                </h4>
+                <span className="text-[11px] font-semibold text-stone-500">
+                  {streakStats.milestones.filter(m => m.unlockedAt !== null).length} / {streakStats.milestones.length} Unlocked
+                </span>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                {streakStats.milestones.map((m: StreakMilestone) => {
+                  const isUnlocked = m.unlockedAt !== null;
+                  return (
+                    <div
+                      key={m.days}
+                      className={`p-2.5 rounded-xl border text-center transition-all ${
+                        isUnlocked
+                          ? 'bg-[#FBF3DC] dark:bg-[#C68A2C]/15 border-[#EEDDB8] dark:border-[#C68A2C]/30 text-[#8E5B13] dark:text-[#EEDDB8] shadow-xs'
+                          : 'bg-[#FAF7F2]/50 dark:bg-stone-950/40 border-[#EDE4D0] dark:border-stone-800 text-stone-400 opacity-60'
+                      }`}
+                    >
+                      <div className="text-xl mb-1">{m.badge}</div>
+                      <div className="font-extrabold text-xs truncate">{m.days} Days</div>
+                      <div className="text-[10px] text-stone-500 dark:text-stone-400 truncate">
+                        {m.title}
+                      </div>
+                      {isUnlocked && (
+                        <div className="mt-1 text-[9px] font-bold text-[#486B2C]">✓ Unlocked</div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
