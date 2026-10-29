@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
-import { buildContributionHeatmap, HeatmapDay, MILESTONES_CONFIG } from '../utils/streak';
-import { getLocalDateString, formatHumanDate, formatRelativeDate, addDays, diffInDays } from '../utils/date';
+import { buildContributionHeatmap, HeatmapDay } from '../utils/streak';
+import { getLocalDateString, formatHumanDate, formatRelativeDate, addDays } from '../utils/date';
 import {
   Flame,
   Calendar as CalendarIcon,
@@ -10,13 +10,7 @@ import {
   ChevronRight,
   CheckCircle2,
   Clock,
-  RotateCcw,
-  AlertTriangle,
-  ArrowRight,
-  Sparkles,
-  Filter,
   Check,
-  BookOpen,
   CalendarDays,
   Trophy,
   Activity,
@@ -37,8 +31,7 @@ export const CalendarView: React.FC = () => {
     completeRevision,
     postponeRevision,
     triggerIslandNotification,
-    setActiveTab,
-    setSelectedSubjectId
+    loadDemoDataAction
   } = useApp();
 
   const todayStr = getLocalDateString();
@@ -48,10 +41,82 @@ export const CalendarView: React.FC = () => {
   const [calendarFilter, setCalendarFilter] = useState<'all' | 'due' | 'completed' | 'revisions'>('all');
   const [viewMode, setViewMode] = useState<'month' | 'heatmap' | 'agenda'>('month');
 
-  // Heatmap data: 52 weeks
-  const { weeks, totalActivities } = useMemo(
-    () => buildContributionHeatmap(activityLogs, todayStr),
-    [activityLogs, todayStr]
+  // Collect all activities from activityLogs as well as completed topics from flatTopics
+  // so the heatmap is guaranteed to reflect real progress
+  const allActivities = useMemo(() => {
+    const logs = [...activityLogs];
+    const loggedKeys = new Set(
+      logs.map(l => `${l.topicId}-${(l.date || l.timestamp || '').slice(0, 10)}-${l.type}`)
+    );
+
+    flatTopics.forEach(item => {
+      if (item.topic.status === 'completed') {
+        const d = (item.topic.completedAt || item.topic.lastRevisedAt || todayStr).slice(0, 10);
+        const key = `${item.topic.id}-${d}-topic_completed`;
+        if (!loggedKeys.has(key)) {
+          loggedKeys.add(key);
+          logs.push({
+            id: `synced-comp-${item.topic.id}`,
+            date: d,
+            topicId: item.topic.id,
+            topicName: item.topic.name,
+            subjectId: item.subjectId,
+            subjectName: item.subjectCode,
+            type: 'topic_completed',
+            timestamp: item.topic.completedAt || new Date().toISOString()
+          });
+        }
+      }
+
+      if (item.topic.lastRevisedAt) {
+        const d = item.topic.lastRevisedAt.slice(0, 10);
+        const key = `${item.topic.id}-${d}-revision_completed`;
+        if (!loggedKeys.has(key)) {
+          loggedKeys.add(key);
+          logs.push({
+            id: `synced-rev-${item.topic.id}`,
+            date: d,
+            topicId: item.topic.id,
+            topicName: item.topic.name,
+            subjectId: item.subjectId,
+            subjectName: item.subjectCode,
+            type: 'revision_completed',
+            timestamp: item.topic.lastRevisedAt
+          });
+        }
+      }
+
+      if (item.topic.history && item.topic.history.length > 0) {
+        item.topic.history.forEach((h, idx) => {
+          if (h.type === 'completed' || h.type === 'revised') {
+            const d = (h.timestamp || '').slice(0, 10);
+            const type = h.type === 'completed' ? 'topic_completed' : 'revision_completed';
+            const key = `${item.topic.id}-${d}-${type}`;
+            if (d && !loggedKeys.has(key)) {
+              loggedKeys.add(key);
+              logs.push({
+                id: `synced-hist-${item.topic.id}-${idx}`,
+                date: d,
+                topicId: item.topic.id,
+                topicName: item.topic.name,
+                subjectId: item.subjectId,
+                subjectName: item.subjectCode,
+                type,
+                timestamp: h.timestamp
+              });
+            }
+          }
+        });
+      }
+    });
+
+    return logs;
+  }, [activityLogs, flatTopics]);
+
+  // Heatmap data: 52 weeks with monthLabels
+  const { weeks, totalActivities, monthLabels } = useMemo(
+    () => buildContributionHeatmap(allActivities, todayStr),
+    [allActivities, todayStr]
   );
 
   // Month Calendar Grid calculation
@@ -65,13 +130,16 @@ export const CalendarView: React.FC = () => {
   // Mapping logs by date for fast lookup
   const logsByDate = useMemo(() => {
     const map = new Map<string, ActivityLogEntry[]>();
-    activityLogs.forEach((log: ActivityLogEntry) => {
-      const arr = map.get(log.date) || [];
-      arr.push(log);
-      map.set(log.date, arr);
+    allActivities.forEach((log: ActivityLogEntry) => {
+      const d = (log.date || log.timestamp || '').slice(0, 10);
+      if (d) {
+        const arr = map.get(d) || [];
+        arr.push(log);
+        map.set(d, arr);
+      }
     });
     return map;
-  }, [activityLogs]);
+  }, [allActivities]);
 
   // Scheduled revisions lookup
   const scheduledByDate = useMemo(() => {
@@ -102,6 +170,19 @@ export const CalendarView: React.FC = () => {
     setSelectedDate(todayStr);
   };
 
+  // Synchronize calendar and day inspector when clicking any heatmap cell
+  const handleSelectHeatmapDate = (dateStr: string) => {
+    setSelectedDate(dateStr);
+    const parts = dateStr.split('-');
+    if (parts.length >= 2) {
+      const y = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10);
+      if (!isNaN(y) && !isNaN(m)) {
+        setCurrentCalendarDate(new Date(y, m - 1, 1));
+      }
+    }
+  };
+
   // Quick revision completion directly from calendar day inspector
   const handleCompleteRevisionFromCalendar = (item: FlatTopicWithSubject) => {
     completeRevision(item.subjectId, item.chapterId, item.topic.id, item.topic.confidence);
@@ -130,31 +211,40 @@ export const CalendarView: React.FC = () => {
 
   // Heatmap intensity color styling
   const getIntensityColor = (level: number, isSelected: boolean) => {
-    if (isSelected) {
-      return 'ring-2 ring-[#C68A2C] scale-110 z-10 shadow-sm border-transparent';
-    }
+    let base = '';
     switch (level) {
       case 0:
-        return 'bg-[#F4EFE6] dark:bg-stone-800/60 border-[#E8DFC8] dark:border-stone-700/60 hover:border-[#C68A2C]';
+        base = 'bg-[#F4EFE6] dark:bg-stone-800/60 border-[#E8DFC8] dark:border-stone-700/60 hover:border-[#C68A2C]';
+        break;
       case 1:
-        return 'bg-[#DCECD1] dark:bg-[#344E22] border-[#C3DCB3] dark:border-[#42642B]';
+        base = 'bg-[#DCECD1] dark:bg-[#344E22] border-[#C3DCB3] dark:border-[#42642B]';
+        break;
       case 2:
-        return 'bg-[#A3CD8B] dark:bg-[#486B2C] border-[#8CB973] dark:border-[#588137] text-white';
+        base = 'bg-[#A3CD8B] dark:bg-[#486B2C] border-[#8CB973] dark:border-[#588137] text-white';
+        break;
       case 3:
-        return 'bg-[#679B45] dark:bg-[#5D8B39] border-[#558237] dark:border-[#70A546] text-white';
+        base = 'bg-[#679B45] dark:bg-[#5D8B39] border-[#558237] dark:border-[#70A546] text-white';
+        break;
       case 4:
-        return 'bg-[#385522] dark:bg-[#6FA444] border-[#2B4219] dark:border-[#82BD52] text-white font-bold';
+        base = 'bg-[#385522] dark:bg-[#6FA444] border-[#2B4219] dark:border-[#82BD52] text-white font-bold';
+        break;
       default:
-        return 'bg-[#F4EFE6] dark:bg-stone-800/60 border-[#E8DFC8] dark:border-stone-700/60';
+        base = 'bg-[#F4EFE6] dark:bg-stone-800/60 border-[#E8DFC8] dark:border-stone-700/60';
+        break;
     }
+
+    if (isSelected) {
+      return `${base} ring-2 ring-[#C68A2C] scale-125 z-10 shadow-md border-[#C68A2C]`;
+    }
+    return base;
   };
 
   // Calculate monthly stats
   const currentMonthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
-  const monthlyLogs = activityLogs.filter(l => l.date.startsWith(currentMonthPrefix));
+  const monthlyLogs = allActivities.filter(l => (l.date || l.timestamp || '').startsWith(currentMonthPrefix));
   const monthlyCompleted = monthlyLogs.filter(l => l.type === 'topic_completed').length;
   const monthlyRevised = monthlyLogs.filter(l => l.type === 'revision_completed').length;
-  const monthlyActiveDays = new Set(monthlyLogs.map(l => l.date)).size;
+  const monthlyActiveDays = new Set(monthlyLogs.map(l => (l.date || l.timestamp || '').slice(0, 10))).size;
 
   // Next Milestone progress
   const nextMilestone = streakStats.milestones.find(m => m.unlockedAt === null);
@@ -362,6 +452,15 @@ export const CalendarView: React.FC = () => {
               <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EAF2E4] text-[#385522] border border-[#D3E3C9]">
                 {totalActivities} Total Actions
               </span>
+              {totalActivities === 0 && (
+                <button
+                  onClick={loadDemoDataAction}
+                  className="px-2 py-0.5 text-[11px] font-bold rounded-lg bg-[#FAF4E4] hover:bg-[#F6E3B4] dark:bg-stone-800 text-[#8E5B13] dark:text-[#EEDDB8] border border-[#EEDDB8] dark:border-stone-700 transition-colors shadow-xs"
+                  title="Populate demo study activity to test heatmap colors and streaks"
+                >
+                  ⚡ Populate Sample Activity
+                </button>
+              )}
             </div>
             <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
               Visual record of all topic completions and spaced repetition reviews across the last 365 days.
@@ -382,42 +481,57 @@ export const CalendarView: React.FC = () => {
           </div>
         </div>
 
-        {/* Heatmap Grid Container */}
-        <div className="overflow-x-auto pb-2 pt-1">
-          <div className="inline-flex gap-1.5 min-w-[760px]">
-            {/* Days of week labels column */}
-            <div className="flex flex-col gap-1 pr-1 text-[9px] font-semibold text-stone-400 select-none">
-              <div className="h-3.5 flex items-center">Sun</div>
-              <div className="h-3.5 flex items-center">Mon</div>
-              <div className="h-3.5 flex items-center">Tue</div>
-              <div className="h-3.5 flex items-center">Wed</div>
-              <div className="h-3.5 flex items-center">Thu</div>
-              <div className="h-3.5 flex items-center">Fri</div>
-              <div className="h-3.5 flex items-center">Sat</div>
+        {/* Heatmap Grid Container with Month Header Labels */}
+        <div className="overflow-x-auto pb-3 pt-1">
+          <div className="inline-flex flex-col gap-1 min-w-[980px]">
+            {/* Month labels row */}
+            <div className="relative h-4 text-[10px] font-semibold text-stone-500 dark:text-stone-400 select-none ml-7">
+              {monthLabels.map((m, idx) => (
+                <span
+                  key={`${m.label}-${idx}`}
+                  className="absolute whitespace-nowrap"
+                  style={{ left: `${m.weekIndex * 18}px` }}
+                >
+                  {m.label}
+                </span>
+              ))}
             </div>
 
-            {/* 52 Weeks Columns */}
-            {weeks.map((week: HeatmapDay[], wIdx: number) => (
-              <div key={wIdx} className="flex flex-col gap-1">
-                {week.map((day: HeatmapDay) => {
-                  const isSelected = day.date === selectedDate;
-                  const isTodayDate = day.isToday;
-
-                  return (
-                    <button
-                      key={day.date}
-                      onClick={() => setSelectedDate(day.date)}
-                      onMouseEnter={() => setHoveredDay(day)}
-                      onMouseLeave={() => setHoveredDay(null)}
-                      className={`w-3.5 h-3.5 rounded-xs border transition-all cursor-pointer relative ${
-                        isTodayDate ? 'ring-2 ring-stone-900 dark:ring-stone-100 font-bold' : ''
-                      } ${getIntensityColor(day.level, isSelected)}`}
-                      title={`${formatHumanDate(day.date)}: ${day.count} activities (${day.completedCount} completed, ${day.revisionCount} revisions)`}
-                    />
-                  );
-                })}
+            <div className="inline-flex gap-1">
+              {/* Days of week labels column */}
+              <div className="flex flex-col gap-1 pr-1.5 w-7 text-[9px] font-semibold text-stone-400 select-none shrink-0">
+                <div className="h-3.5 flex items-center">Sun</div>
+                <div className="h-3.5 flex items-center">Mon</div>
+                <div className="h-3.5 flex items-center">Tue</div>
+                <div className="h-3.5 flex items-center">Wed</div>
+                <div className="h-3.5 flex items-center">Thu</div>
+                <div className="h-3.5 flex items-center">Fri</div>
+                <div className="h-3.5 flex items-center">Sat</div>
               </div>
-            ))}
+
+              {/* 52 Weeks Columns */}
+              {weeks.map((week: HeatmapDay[], wIdx: number) => (
+                <div key={wIdx} className="flex flex-col gap-1">
+                  {week.map((day: HeatmapDay) => {
+                    const isSelected = day.date === selectedDate;
+                    const isTodayDate = day.isToday;
+
+                    return (
+                      <button
+                        key={day.date}
+                        onClick={() => handleSelectHeatmapDate(day.date)}
+                        onMouseEnter={() => setHoveredDay(day)}
+                        onMouseLeave={() => setHoveredDay(null)}
+                        className={`w-3.5 h-3.5 rounded-xs border transition-all cursor-pointer relative ${
+                          isTodayDate ? 'ring-2 ring-stone-900 dark:ring-stone-100 font-bold' : ''
+                        } ${getIntensityColor(day.level, isSelected)}`}
+                        title={`${formatHumanDate(day.date)}: ${day.count} activities (${day.completedCount} completed, ${day.revisionCount} revisions)`}
+                      />
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 

@@ -8,20 +8,11 @@ import {
   RotateCcw,
   Calendar,
   Sparkles,
-  Filter,
-  CheckCircle2,
   Clock,
   ArrowUpRight,
-  BrainCircuit,
-  Target,
-  Zap,
-  Activity,
-  Layers,
-  ChevronDown,
-  BookOpen,
   Award
 } from 'lucide-react';
-import { Subject, ActivityLogEntry } from '../types';
+import { Subject, Chapter, Topic, ActivityLogEntry } from '../types';
 import { FlatTopicWithSubject } from '../utils/revision';
 import { playRevisionSound } from '../utils/sound';
 
@@ -39,7 +30,7 @@ export const AnalyticsView: React.FC = () => {
   } = useApp();
 
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | 'all'>('30d');
-  const [selectedSubjectFilter, setSelectedSubjectFilter] = useState<string>('all');
+  const [selectedSubjectFilter] = useState<string>('all');
   const [matrixSortBy, setMatrixSortBy] = useState<'weightage' | 'syllabus' | 'overdue' | 'weak'>('weightage');
   const [activeSection, setActiveSection] = useState<'overview' | 'memory' | 'subjects'>('overview');
 
@@ -63,6 +54,7 @@ export const AnalyticsView: React.FC = () => {
   // Total topics metrics
   const totalTopics = flatTopics.length;
   const completedTopics = flatTopics.filter((t: FlatTopicWithSubject) => t.topic.status === 'completed').length;
+  const remainingTopics = totalTopics - completedTopics;
   const syllabusPct = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
 
   // Active days in selected period
@@ -76,7 +68,6 @@ export const AnalyticsView: React.FC = () => {
   const zeroRevisionCompleted = flatTopics.filter(
     (t: FlatTopicWithSubject) => t.topic.status === 'completed' && t.topic.revisionCount === 0
   ).length;
-  const uncompletedTopics = flatTopics.filter((t: FlatTopicWithSubject) => t.topic.status !== 'completed').length;
 
   const retentionScore =
     completedTopics > 0 ? Math.round((reinforcedTopics / completedTopics) * 100) : 0;
@@ -94,11 +85,6 @@ export const AnalyticsView: React.FC = () => {
   const prev7DaysLogs = activityLogs.filter(
     (l: ActivityLogEntry) => l.date >= addDays(todayStr, -14) && l.date < addDays(todayStr, -7)
   ).length;
-
-  // Estimated weekly pace
-  const weeklyPace = Math.max(1, past7DaysLogs);
-  const remainingTopics = totalTopics - completedTopics;
-  const estimatedWeeksToFinish = Math.ceil(remainingTopics / (weeklyPace * 0.7)); // conservative estimate
 
   // Day of week activity distribution (Sun=0, Mon=1, ..., Sat=6)
   const dayOfWeekCounts = [0, 0, 0, 0, 0, 0, 0];
@@ -119,8 +105,8 @@ export const AnalyticsView: React.FC = () => {
       let overdue = 0;
       let weak = 0;
 
-      subj.chapters.forEach(c => {
-        c.topics.forEach(t => {
+      subj.chapters.forEach((c: Chapter) => {
+        c.topics.forEach((t: Topic) => {
           total++;
           if (t.status === 'completed') {
             completed++;

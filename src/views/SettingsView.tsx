@@ -13,18 +13,12 @@ import {
   RefreshCw,
   CheckCircle2,
   Sparkles,
-  Sliders,
   Copy,
   Check,
-  Flame,
   AlertTriangle,
   Play,
   RotateCcw,
-  Zap,
-  ShieldAlert,
-  HelpCircle,
-  Clock,
-  Layers
+  ShieldAlert
 } from 'lucide-react';
 import {
   playCheckSound,
@@ -56,7 +50,6 @@ export const SettingsView: React.FC = () => {
   const [showResetConfirmModal, setShowResetConfirmModal] = useState(false);
 
   const daysLeft = daysUntilExam(settings.examDate);
-  const examYear = new Date(settings.examDate).getFullYear() || 2027;
 
   // Interval chips
   const parsedIntervals = useMemo(() => {

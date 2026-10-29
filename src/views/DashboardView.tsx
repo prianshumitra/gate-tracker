@@ -7,11 +7,9 @@ import {
   Clock,
   ChevronRight,
   ChevronLeft,
-  CheckCircle2,
   AlertTriangle,
   Target,
   ArrowUpRight,
-  Plus,
   Share2,
   Terminal,
   Database,
@@ -21,14 +19,6 @@ import {
   FileCode,
   User
 } from 'lucide-react';
-
-interface RevisionTaskItem {
-  id: string;
-  name: string;
-  subject: string;
-  time: string;
-  completed: boolean;
-}
 
 export const DashboardView: React.FC = () => {
   const {
@@ -58,43 +48,7 @@ export const DashboardView: React.FC = () => {
     t => t.topic.status !== 'completed' && (t.topic.priority === 'critical' || t.topic.priority === 'high')
   ).length;
 
-  // Interactive revision tasks from the screenshot — ALL UNCHECKED by default
-  const [tasks, setTasks] = useState<RevisionTaskItem[]>([
-    { id: 't1', name: 'Process Scheduling', subject: 'Operating Systems', time: '09:00 AM', completed: false },
-    { id: 't2', name: 'Normalization', subject: 'DBMS', time: '10:30 AM', completed: false },
-    { id: 't3', name: 'Graph Algorithms', subject: 'DSA', time: '01:00 PM', completed: false },
-    { id: 't4', name: 'Deadlocks', subject: 'Operating Systems', time: '03:00 PM', completed: false },
-    { id: 't5', name: 'Finite Automata', subject: 'Theory of Computation', time: '05:00 PM', completed: false },
-    { id: 't6', name: 'SQL Queries', subject: 'DBMS', time: '07:00 PM', completed: false },
-  ]);
 
-  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
-  const [newTaskName, setNewTaskName] = useState('');
-  const [newTaskSubject, setNewTaskSubject] = useState('Operating Systems');
-  const [newTaskTime, setNewTaskTime] = useState('08:00 PM');
-
-  const toggleTask = (id: string) => {
-    setTasks(prev =>
-      prev.map(t => (t.id === id ? { ...t, completed: !t.completed } : t))
-    );
-  };
-
-  const handleAddNewTask = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newTaskName.trim()) return;
-    setTasks(prev => [
-      ...prev,
-      {
-        id: `t-${Date.now()}`,
-        name: newTaskName.trim(),
-        subject: newTaskSubject,
-        time: newTaskTime,
-        completed: false
-      }
-    ]);
-    setNewTaskName('');
-    setIsAddTaskModalOpen(false);
-  };
 
   // 11 Subjects dynamically mapped from syllabus with real topics & completion
   const subjectsData = subjects.map(s => {
@@ -413,160 +367,88 @@ export const DashboardView: React.FC = () => {
             </div>
           </div>
 
-          {/* Split Row: Subject Progress & Today's Revision */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-            {/* Left Card: Subject Progress Table */}
-            <div className="lg:col-span-7 p-5 rounded-2xl bg-white border border-[#EDE4D0] shadow-[0_2px_12px_rgba(60,50,30,0.02)] space-y-4">
-              <div className="flex items-center justify-between pb-1">
-                <h3 className="font-bold text-sm text-stone-900">
-                  Subject Progress
-                </h3>
+          {/* Subject Progress Table */}
+          <div className="p-5 rounded-2xl bg-white border border-[#EDE4D0] shadow-[0_2px_12px_rgba(60,50,30,0.02)] space-y-4">
+            <div className="flex items-center justify-between pb-1">
+              <h3 className="font-bold text-sm text-stone-900">
+                Subject Progress
+              </h3>
 
-                {/* Sort dropdown */}
-                <div className="relative">
-                  <select
-                    value={subjectSort}
-                    onChange={e => setSubjectSort(e.target.value as any)}
-                    className="text-xs text-stone-600 bg-white border border-[#E2D8C2] rounded-lg px-2.5 py-1 pr-6 appearance-none outline-none cursor-pointer hover:bg-[#F8F5EB] font-medium"
-                  >
-                    <option value="Priority">Sort by: Priority</option>
-                    <option value="Completion">Sort by: Completion</option>
-                    <option value="Urgency">Sort by: Urgency</option>
-                  </select>
-                  <span className="absolute right-2 top-1.5 pointer-events-none text-stone-400 text-[10px]">
-                    ▼
-                  </span>
-                </div>
-              </div>
-
-              {/* Table Column Headers */}
-              <div className="grid grid-cols-12 gap-1 text-[10px] font-semibold text-stone-400 uppercase tracking-wider px-2">
-                <div className="col-span-5">Subject</div>
-                <div className="col-span-3 text-center">Completion</div>
-                <div className="col-span-2 text-center">Topics</div>
-                <div className="col-span-2 text-right">Priority</div>
-              </div>
-
-              {/* Subject Rows */}
-              <div className="divide-y divide-[#EDE4D0]/60">
-                {sortedSubjects.map(sub => {
-                  const isHighCompletion = sub.completion >= 50;
-
-                  return (
-                    <div
-                      key={sub.id}
-                      onClick={() => {
-                        setSelectedSubjectId(sub.id);
-                        setActiveTab('subjects');
-                      }}
-                      className="grid grid-cols-12 gap-1 items-center py-2 px-2 hover:bg-[#F6F0E0] rounded-xl cursor-pointer transition-colors group"
-                    >
-                      {/* Column 1: Icon + Subject Name */}
-                      <div className="col-span-5 flex items-center gap-2 min-w-0">
-                        {renderSubjectIcon(sub.iconType, sub.bgType)}
-                        <span className="text-[11.5px] font-semibold text-stone-900 truncate group-hover:text-[#486B2C] transition-colors">
-                          {sub.name}
-                        </span>
-                      </div>
-
-                      {/* Column 2: Progress bar + Percentage */}
-                      <div className="col-span-3 flex items-center gap-1.5 px-0.5">
-                        <div className="flex-1 h-1.5 bg-[#ECE4D2] rounded-full overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${
-                              isHighCompletion ? 'bg-[#486B2C]' : 'bg-[#C68A2C]'
-                            }`}
-                            style={{ width: `${sub.completion}%` }}
-                          />
-                        </div>
-                        <span className="text-[11px] font-bold text-stone-700 w-7 text-right">
-                          {sub.completion}%
-                        </span>
-                      </div>
-
-                      {/* Column 3: Topics count */}
-                      <div className="col-span-2 text-center text-[10.5px] text-stone-500 font-medium">
-                        {sub.topicsDone}/{sub.topicsTotal}
-                      </div>
-
-                      {/* Column 4: Priority Badge + Chevron */}
-                      <div className="col-span-2 flex items-center justify-end gap-1">
-                        {renderPriorityBadge(sub.priority)}
-                        <ChevronRight className="w-3 h-3 text-[#A29A88] group-hover:text-[#486B2C] transition-colors shrink-0" />
-                      </div>
-                    </div>
-                  );
-                })}
+              {/* Sort dropdown */}
+              <div className="relative">
+                <select
+                  value={subjectSort}
+                  onChange={e => setSubjectSort(e.target.value as any)}
+                  className="text-xs text-stone-600 bg-white border border-[#E2D8C2] rounded-lg px-2.5 py-1 pr-6 appearance-none outline-none cursor-pointer hover:bg-[#F8F5EB] font-medium"
+                >
+                  <option value="Priority">Sort by: Priority</option>
+                  <option value="Completion">Sort by: Completion</option>
+                  <option value="Urgency">Sort by: Urgency</option>
+                </select>
+                <span className="absolute right-2 top-1.5 pointer-events-none text-stone-400 text-[10px]">
+                  ▼
+                </span>
               </div>
             </div>
 
-            {/* Right Card: Today's Revision in Crème Ochre */}
-            <div className="lg:col-span-5 p-5 rounded-2xl bg-white border border-[#EDE4D0] shadow-[0_2px_12px_rgba(60,50,30,0.02)] flex flex-col justify-between space-y-4">
-              <div>
-                <div className="flex items-center justify-between pb-1">
-                  <h3 className="font-bold text-sm text-stone-900">
-                    Today&apos;s Revision
-                  </h3>
-                  <button
-                    onClick={() => setActiveTab('revision')}
-                    className="text-xs text-[#BA7E26] font-semibold hover:text-[#8E5B13] hover:underline"
+            {/* Table Column Headers */}
+            <div className="grid grid-cols-12 gap-1 text-[10px] font-semibold text-stone-400 uppercase tracking-wider px-2">
+              <div className="col-span-5">Subject</div>
+              <div className="col-span-3 text-center">Completion</div>
+              <div className="col-span-2 text-center">Topics</div>
+              <div className="col-span-2 text-right">Priority</div>
+            </div>
+
+            {/* Subject Rows */}
+            <div className="divide-y divide-[#EDE4D0]/60">
+              {sortedSubjects.map(sub => {
+                const isHighCompletion = sub.completion >= 50;
+
+                return (
+                  <div
+                    key={sub.id}
+                    onClick={() => {
+                      setSelectedSubjectId(sub.id);
+                      setActiveTab('subjects');
+                    }}
+                    className="grid grid-cols-12 gap-1 items-center py-2 px-2 hover:bg-[#F6F0E0] rounded-xl cursor-pointer transition-colors group"
                   >
-                    View All
-                  </button>
-                </div>
-
-                {/* Revision tasks list */}
-                <div className="divide-y divide-[#EDE4D0]/60 mt-2">
-                  {tasks.map(item => (
-                    <div
-                      key={item.id}
-                      onClick={() => toggleTask(item.id)}
-                      className="py-3 flex items-center justify-between gap-3 cursor-pointer group hover:bg-[#F6F0E0] px-2 rounded-xl transition-colors"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        {/* Checkbox button */}
-                        <div
-                          className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-colors ${
-                            item.completed
-                              ? 'bg-[#486B2C] text-white'
-                              : 'border-2 border-[#D6CDBC] group-hover:border-[#968A72]'
-                          }`}
-                        >
-                          {item.completed && <CheckCircle2 className="w-4 h-4 fill-white text-[#486B2C]" />}
-                        </div>
-
-                        <div className="min-w-0">
-                          <h4
-                            className={`text-xs font-semibold truncate ${
-                              item.completed
-                                ? 'line-through text-[#968F7E]'
-                                : 'text-stone-900'
-                            }`}
-                          >
-                            {item.name}
-                          </h4>
-                          <span className="text-[11px] text-stone-400 block truncate">
-                            {item.subject}
-                          </span>
-                        </div>
-                      </div>
-
-                      <span className="text-[11px] text-stone-500 font-medium shrink-0">
-                        {item.time}
+                    {/* Column 1: Icon + Subject Name */}
+                    <div className="col-span-5 flex items-center gap-2 min-w-0">
+                      {renderSubjectIcon(sub.iconType, sub.bgType)}
+                      <span className="text-[11.5px] font-semibold text-stone-900 truncate group-hover:text-[#486B2C] transition-colors">
+                        {sub.name}
                       </span>
                     </div>
-                  ))}
-                </div>
-              </div>
 
-              {/* Add Task Button in Crème Ochre */}
-              <button
-                onClick={() => setIsAddTaskModalOpen(true)}
-                className="w-full py-2.5 rounded-xl bg-[#C68A2C] hover:bg-[#B37920] text-white font-semibold text-xs transition-colors shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.99]"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Task</span>
-              </button>
+                    {/* Column 2: Progress bar + Percentage */}
+                    <div className="col-span-3 flex items-center gap-1.5 px-0.5">
+                      <div className="flex-1 h-1.5 bg-[#ECE4D2] rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${
+                            isHighCompletion ? 'bg-[#486B2C]' : 'bg-[#C68A2C]'
+                          }`}
+                          style={{ width: `${sub.completion}%` }}
+                        />
+                      </div>
+                      <span className="text-[11px] font-bold text-stone-700 w-7 text-right">
+                        {sub.completion}%
+                      </span>
+                    </div>
+
+                    {/* Column 3: Topics count */}
+                    <div className="col-span-2 text-center text-[10.5px] text-stone-500 font-medium">
+                      {sub.topicsDone}/{sub.topicsTotal}
+                    </div>
+
+                    {/* Column 4: Priority Badge + Chevron */}
+                    <div className="col-span-2 flex items-center justify-end gap-1">
+                      {renderPriorityBadge(sub.priority)}
+                      <ChevronRight className="w-3 h-3 text-[#A29A88] group-hover:text-[#486B2C] transition-colors shrink-0" />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -881,75 +763,7 @@ export const DashboardView: React.FC = () => {
         </div>
       </div>
 
-      {/* Add Task Modal */}
-      {isAddTaskModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in">
-          <form
-            onSubmit={handleAddNewTask}
-            className="w-full max-w-md bg-white border border-[#EFEBE3] rounded-2xl p-6 shadow-2xl space-y-4"
-          >
-            <h3 className="font-bold text-base text-stone-900">
-              Add Today&apos;s Revision Task
-            </h3>
 
-            <div className="space-y-3 text-xs">
-              <div>
-                <label className="text-stone-600 block mb-1 font-medium">Task / Topic Name</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Virtual Memory & Paging"
-                  value={newTaskName}
-                  onChange={e => setNewTaskName(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#F7F4EE] border border-[#EFEBE3] rounded-xl text-stone-900 text-xs outline-none focus:border-[#C59134]"
-                />
-              </div>
-
-              <div>
-                <label className="text-stone-600 block mb-1 font-medium">GATE Subject</label>
-                <select
-                  value={newTaskSubject}
-                  onChange={e => setNewTaskSubject(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#F7F4EE] border border-[#EFEBE3] rounded-xl text-stone-900 text-xs outline-none focus:border-[#C59134]"
-                >
-                  {subjectsData.map(s => (
-                    <option key={s.id} value={s.name}>
-                      {s.name} ({s.code})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="text-stone-600 block mb-1 font-medium">Scheduled Time</label>
-                <input
-                  type="text"
-                  value={newTaskTime}
-                  onChange={e => setNewTaskTime(e.target.value)}
-                  placeholder="e.g. 08:00 PM"
-                  className="w-full px-3 py-2 bg-[#F7F4EE] border border-[#EFEBE3] rounded-xl text-stone-900 text-xs outline-none focus:border-[#C59134]"
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-3 border-t border-[#EFEBE3]">
-              <button
-                type="button"
-                onClick={() => setIsAddTaskModalOpen(false)}
-                className="px-3 py-1.5 rounded-xl text-xs font-semibold text-stone-600 hover:bg-stone-100"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-1.5 rounded-xl bg-[#C59134] hover:bg-[#B68128] text-white text-xs font-semibold shadow-xs"
-              >
-                Add to Schedule
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
     </div>
   );
 };

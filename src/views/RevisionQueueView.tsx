@@ -4,7 +4,6 @@ import { RevisionFilterType, filterRevisionTopics, getRevisionCounts, FlatTopicW
 import { getLocalDateString, formatHumanDate, formatRelativeDate } from '../utils/date';
 import { ConfidenceLevel } from '../types';
 import {
-  RotateCcw,
   CheckCircle2,
   Clock,
   BookOpen

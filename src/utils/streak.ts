@@ -172,27 +172,36 @@ export interface HeatmapDay {
   revisionCount: number;
 }
 
+export interface HeatmapMonthLabel {
+  label: string;
+  weekIndex: number;
+}
+
 /**
  * Builds a 52-week grid (approx 365-371 days) of contribution cells ending on current week Sunday
  */
 export function buildContributionHeatmap(
   activityLogs: ActivityLogEntry[],
   todayStr: string = getLocalDateString()
-): { weeks: HeatmapDay[][]; totalActivities: number } {
+): { weeks: HeatmapDay[][]; totalActivities: number; monthLabels: HeatmapMonthLabel[] } {
   // Aggregate counts per date
   const countsByDate = new Map<string, { completed: number; revised: number; total: number }>();
   let totalActivities = 0;
 
   for (const log of activityLogs) {
+    if (!log) continue;
+    const dateKey = (log.date || log.timestamp || '').slice(0, 10);
+    if (!dateKey) continue;
+
     totalActivities++;
-    const cur = countsByDate.get(log.date) || { completed: 0, revised: 0, total: 0 };
+    const cur = countsByDate.get(dateKey) || { completed: 0, revised: 0, total: 0 };
     if (log.type === 'topic_completed') {
       cur.completed++;
     } else {
       cur.revised++;
     }
     cur.total++;
-    countsByDate.set(log.date, cur);
+    countsByDate.set(dateKey, cur);
   }
 
   // End date is upcoming Saturday / Sunday of current week to make full columns
@@ -236,5 +245,21 @@ export function buildContributionHeatmap(
     weeks.push(days.slice(i, i + 7));
   }
 
-  return { weeks, totalActivities };
+  // Calculate month labels positioned along the 52 weeks
+  const monthLabels: HeatmapMonthLabel[] = [];
+  let lastMonth = '';
+  weeks.forEach((week, wIdx) => {
+    const sampleDay = week[3] || week[0];
+    if (sampleDay) {
+      const currentMonthKey = sampleDay.date.slice(0, 7);
+      if (currentMonthKey !== lastMonth) {
+        const monthDate = parseLocalDate(sampleDay.date);
+        const label = monthDate.toLocaleDateString('en-US', { month: 'short' });
+        monthLabels.push({ label, weekIndex: wIdx });
+        lastMonth = currentMonthKey;
+      }
+    }
+  });
+
+  return { weeks, totalActivities, monthLabels };
 }
