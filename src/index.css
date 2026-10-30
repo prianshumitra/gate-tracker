@@ -3,11 +3,11 @@
 @layer base {
   :root {
     --bg-cream: #F8F5EB;
-    --bg-cream-card: #FFFFFF;
-    --bg-cream-hover: #F2EBDA;
-    --bg-cream-subtle: #ECE4D2;
-    --border-cream: #EDE4D0;
-    --border-cream-dark: #DDD2BA;
+    --bg-cream-card: #EBE8E1;
+    --bg-cream-hover: #DFDBD1;
+    --bg-cream-subtle: #E2DDD3;
+    --border-cream: #DDD8CE;
+    --border-cream-dark: #CEC7BA;
     --text-primary: #1D2417;
     --text-secondary: #575D4E;
     --text-muted: #8B9080;

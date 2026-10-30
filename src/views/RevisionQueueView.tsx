@@ -80,7 +80,7 @@ export const RevisionQueueView: React.FC = () => {
               onClick={() => setActiveFilter(tab.id)}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border ${isActive
                   ? 'bg-[#486B2C] border-[#486B2C] text-white shadow-xs'
-                  : 'bg-white border-[#EDE4D0] text-stone-600 hover:text-stone-900 hover:bg-[#FAF7F0] shadow-2xs'
+                  : 'bg-[#EBE8E1]/90 backdrop-blur-md border-[#DDD8CE] text-stone-700 hover:text-stone-900 hover:bg-[#DFDBD1] shadow-2xs'
                 }`}
             >
               <span>{tab.label}</span>
@@ -98,7 +98,7 @@ export const RevisionQueueView: React.FC = () => {
       {/* Content List */}
       <div className="space-y-4">
         {filteredTopics.length === 0 ? (
-          <div className="p-12 text-center rounded-2xl bg-white border border-[#EDE4D0] shadow-[0_2px_12px_rgba(60,50,30,0.02)] space-y-3">
+          <div className="p-12 text-center rounded-2xl bg-[#EBE8E1]/90 backdrop-blur-xl border border-[#DDD8CE] shadow-[0_4px_20px_rgba(30,25,15,0.03)] space-y-3">
             <div className="w-12 h-12 rounded-full bg-[#EAF2E4] text-[#486B2C] flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-6 h-6" />
             </div>
@@ -119,9 +119,9 @@ export const RevisionQueueView: React.FC = () => {
             return (
               <div
                 key={item.topic.id}
-                className={`p-5 sm:p-6 rounded-2xl border transition-all shadow-[0_2px_12px_rgba(60,50,30,0.02)] ${isOverdue
-                    ? 'bg-[#FAF7F0] border-[#EEDDB8]'
-                    : 'bg-white border-[#EDE4D0]'
+                className={`p-5 sm:p-6 rounded-2xl border transition-all shadow-[0_4px_20px_rgba(30,25,15,0.03)] ${isOverdue
+                    ? 'bg-[#FAF2DF] border-[#EEDDB8]'
+                    : 'bg-[#EBE8E1]/90 backdrop-blur-xl border-[#DDD8CE]'
                   }`}
               >
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">

@@ -265,7 +265,7 @@ export const DashboardView: React.FC = () => {
           {/* Row of 3 Metric Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* 1. Syllabus Completion */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-white border border-[#EDE4D0] shadow-[0_2px_12px_rgba(60,50,30,0.02)] flex items-center justify-between">
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#EBE8E1]/90 backdrop-blur-xl border border-[#DDD8CE] shadow-[0_4px_20px_rgba(30,25,15,0.03)] flex items-center justify-between">
               <div>
                 <div className="w-9 h-9 rounded-xl bg-[#FDF6E5] text-[#BA7E26] flex items-center justify-center">
                   <BookOpen className="w-4 h-4" />
@@ -305,7 +305,7 @@ export const DashboardView: React.FC = () => {
             </div>
 
             {/* 2. Current Streak in Crème Ochre */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-white border border-[#EDE4D0] shadow-[0_2px_12px_rgba(60,50,30,0.02)] flex items-center justify-between">
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#EBE8E1]/90 backdrop-blur-xl border border-[#DDD8CE] shadow-[0_4px_20px_rgba(30,25,15,0.03)] flex items-center justify-between">
               <div>
                 <div className="w-9 h-9 rounded-xl bg-[#FDF6E5] text-[#C68A2C] flex items-center justify-center">
                   <Flame className="w-4 h-4 fill-[#C68A2C]" />
@@ -338,7 +338,7 @@ export const DashboardView: React.FC = () => {
             </div>
 
             {/* 3. Revision Due in Sap Green */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-white border border-[#EDE4D0] shadow-[0_2px_12px_rgba(60,50,30,0.02)] flex items-center justify-between">
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#EBE8E1]/90 backdrop-blur-xl border border-[#DDD8CE] shadow-[0_4px_20px_rgba(30,25,15,0.03)] flex items-center justify-between">
               <div>
                 <div className="w-9 h-9 rounded-xl bg-[#EAF2E4] text-[#486B2C] flex items-center justify-center">
                   <Clock className="w-4 h-4" />
@@ -367,7 +367,7 @@ export const DashboardView: React.FC = () => {
           </div>
 
           {/* Subject Progress Table */}
-          <div className="p-5 rounded-2xl bg-white border border-[#EDE4D0] shadow-[0_2px_12px_rgba(60,50,30,0.02)] space-y-4">
+          <div className="p-5 rounded-2xl bg-[#EBE8E1]/90 backdrop-blur-xl border border-[#DDD8CE] shadow-[0_4px_20px_rgba(30,25,15,0.03)] space-y-4">
             <div className="flex items-center justify-between pb-1">
               <h3 className="font-bold text-sm text-stone-900">
                 Subject Progress
@@ -378,7 +378,7 @@ export const DashboardView: React.FC = () => {
                 <select
                   value={subjectSort}
                   onChange={e => setSubjectSort(e.target.value as any)}
-                  className="text-xs text-stone-600 bg-white border border-[#E2D8C2] rounded-lg px-2.5 py-1 pr-6 appearance-none outline-none cursor-pointer hover:bg-[#F8F5EB] font-medium"
+                  className="text-xs text-stone-700 bg-[#DFDBD1]/80 border border-[#CEC8BB] rounded-lg px-2.5 py-1 pr-6 appearance-none outline-none cursor-pointer hover:bg-[#D5D0C5] font-medium shadow-2xs"
                 >
                   <option value="Priority">Sort by: Priority</option>
                   <option value="Completion">Sort by: Completion</option>
@@ -399,7 +399,7 @@ export const DashboardView: React.FC = () => {
             </div>
 
             {/* Subject Rows */}
-            <div className="divide-y divide-[#EDE4D0]/60">
+            <div className="divide-y divide-[#DDD8CE]/70">
               {sortedSubjects.map(sub => {
                 const isHighCompletion = sub.completion >= 50;
 
@@ -410,7 +410,7 @@ export const DashboardView: React.FC = () => {
                       setSelectedSubjectId(sub.id);
                       setActiveTab('subjects');
                     }}
-                    className="grid grid-cols-12 gap-1 items-center py-2 px-2 hover:bg-[#F6F0E0] rounded-xl cursor-pointer transition-colors group"
+                    className="grid grid-cols-12 gap-1 items-center py-2 px-2 hover:bg-[#DFDBD1]/60 rounded-xl cursor-pointer transition-colors group"
                   >
                     {/* Column 1: Icon + Subject Name */}
                     <div className="col-span-5 flex items-center gap-2 min-w-0">
@@ -422,7 +422,7 @@ export const DashboardView: React.FC = () => {
 
                     {/* Column 2: Progress bar + Percentage */}
                     <div className="col-span-3 flex items-center gap-1.5 px-0.5">
-                      <div className="flex-1 h-1.5 bg-[#ECE4D2] rounded-full overflow-hidden">
+                      <div className="flex-1 h-1.5 bg-[#DFDBD1] rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full ${isHighCompletion ? 'bg-[#486B2C]' : 'bg-[#C68A2C]'
                             }`}
@@ -454,7 +454,7 @@ export const DashboardView: React.FC = () => {
         {/* Right 4 Columns on XL: Study Calendar, Study Consistency, Quick Insights */}
         <div className="xl:col-span-4 space-y-5">
           {/* 1. Study Calendar Card */}
-          <div className="p-5 rounded-2xl bg-white border border-[#EFEBE3] shadow-[0_2px_12px_rgba(60,50,30,0.02)] space-y-4">
+          <div className="p-5 rounded-2xl bg-[#EBE8E1]/90 backdrop-blur-xl border border-[#DDD8CE] shadow-[0_4px_20px_rgba(30,25,15,0.03)] space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-sm text-stone-900">
                 Study Calendar
@@ -561,7 +561,7 @@ export const DashboardView: React.FC = () => {
                           ? 'bg-[#3E5C38] text-white shadow-xs'
                           : isNextMonth
                             ? 'text-stone-300'
-                            : 'text-stone-700 group-hover:bg-stone-100'
+                            : 'text-stone-700 group-hover:bg-[#DFDBD1]'
                         }`}
                     >
                       {item.day}
@@ -582,7 +582,7 @@ export const DashboardView: React.FC = () => {
             </div>
 
             {/* Calendar Legend */}
-            <div className="flex items-center justify-center gap-4 pt-2 border-t border-[#F2EDE4]/60 text-[10px] text-stone-500 font-medium">
+            <div className="flex items-center justify-center gap-4 pt-2 border-t border-[#DDD8CE]/70 text-[10px] text-stone-500 font-medium">
               <span className="flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#3E5C38]" />
                 Completed
@@ -599,7 +599,7 @@ export const DashboardView: React.FC = () => {
           </div>
 
           {/* 2. Study Consistency Heatmap Card */}
-          <div className="p-5 rounded-2xl bg-white border border-[#EFEBE3] shadow-[0_2px_12px_rgba(60,50,30,0.02)] space-y-4">
+          <div className="p-5 rounded-2xl bg-[#EBE8E1]/90 backdrop-blur-xl border border-[#DDD8CE] shadow-[0_4px_20px_rgba(30,25,15,0.03)] space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-sm text-stone-900">
                 Study Consistency
@@ -636,8 +636,8 @@ export const DashboardView: React.FC = () => {
                 {/* 20 Columns of Week Cells */}
                 <div className="flex-1 grid grid-cols-20 gap-1">
                   {Array.from({ length: 20 * 7 }).map((_, cIdx) => {
-                    // Start clean in cream #EAE5DC, color if real logs exist
-                    let bg = '#EAE5DC';
+                    // Start clean in creamy grey #DFDBD1, color if real logs exist
+                    let bg = '#DFDBD1';
                     if (activityLogs.length > 0) {
                       const logCount = activityLogs.length;
                       if (cIdx === 20 * 7 - 1) {
@@ -659,7 +659,7 @@ export const DashboardView: React.FC = () => {
               {/* Less / More Legend */}
               <div className="flex items-center justify-end gap-1.5 text-[10px] text-stone-400 pt-1 pr-1 font-medium">
                 <span>Less</span>
-                <span className="w-2 h-2 rounded-xs bg-[#EAE5DC]" />
+                <span className="w-2 h-2 rounded-xs bg-[#DFDBD1]" />
                 <span className="w-2 h-2 rounded-xs bg-[#C4D4BF]" />
                 <span className="w-2 h-2 rounded-xs bg-[#8EA685]" />
                 <span className="w-2 h-2 rounded-xs bg-[#52744B]" />
@@ -670,7 +670,7 @@ export const DashboardView: React.FC = () => {
           </div>
 
           {/* 3. Quick Insights Card */}
-          <div className="p-5 rounded-2xl bg-white border border-[#EFEBE3] shadow-[0_2px_12px_rgba(60,50,30,0.02)] space-y-4">
+          <div className="p-5 rounded-2xl bg-[#EBE8E1]/90 backdrop-blur-xl border border-[#DDD8CE] shadow-[0_4px_20px_rgba(30,25,15,0.03)] space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-sm text-stone-900 flex items-center gap-1.5">
                 <span className="text-[#C48D2E]">✦</span>
@@ -689,7 +689,7 @@ export const DashboardView: React.FC = () => {
               {/* Insight 1: Syllabus completion summary */}
               <div
                 onClick={() => setActiveTab('analytics')}
-                className="p-3 rounded-xl hover:bg-[#F9F7F3] flex items-center justify-between gap-3 cursor-pointer transition-colors group"
+                className="p-3 rounded-xl hover:bg-[#DFDBD1]/60 flex items-center justify-between gap-3 cursor-pointer transition-colors group"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-[#E8EFE5] text-[#3E6135] flex items-center justify-center shrink-0">
@@ -713,7 +713,7 @@ export const DashboardView: React.FC = () => {
                   setSelectedSubjectId(overdueTopics.length > 0 ? overdueTopics[0].subjectId : 'os');
                   setActiveTab('subjects');
                 }}
-                className="p-3 rounded-xl hover:bg-[#F9F7F3] flex items-center justify-between gap-3 cursor-pointer transition-colors group"
+                className="p-3 rounded-xl hover:bg-[#DFDBD1]/60 flex items-center justify-between gap-3 cursor-pointer transition-colors group"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-[#FAF0D9] text-[#9C6E15] flex items-center justify-center shrink-0">
@@ -738,7 +738,7 @@ export const DashboardView: React.FC = () => {
               {/* Insight 3: Core high-priority count */}
               <div
                 onClick={() => setActiveTab('revision')}
-                className="p-3 rounded-xl hover:bg-[#F9F7F3] flex items-center justify-between gap-3 cursor-pointer transition-colors group"
+                className="p-3 rounded-xl hover:bg-[#DFDBD1]/60 flex items-center justify-between gap-3 cursor-pointer transition-colors group"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-[#F7EBD2] text-[#B88022] flex items-center justify-center shrink-0">
