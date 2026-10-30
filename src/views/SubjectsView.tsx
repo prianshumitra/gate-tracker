@@ -244,7 +244,7 @@ export const SubjectsView: React.FC = () => {
                   onClick={() => setSelectedSubjectId(subj.id)}
                   className={`p-3.5 rounded-2xl border transition-all cursor-pointer group ${isSelected
                       ? 'bg-[#F6E3B4] border-[#E5CA8F] text-[#221C11] shadow-xs ring-1 ring-[#C68A2C]/20'
-                      : 'bg-[#EBE8E1]/90 backdrop-blur-md border-[#DDD8CE] hover:border-[#CEC7BA] hover:bg-[#DFDBD1] text-stone-700 shadow-2xs'
+                      : 'bg-[#EBE8E1]/90 backdrop-blur-md border-[#C5BEAF] hover:border-[#B5AD9C] hover:bg-[#DFDBD1] text-stone-700 shadow-xs'
                     }`}
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
@@ -316,7 +316,7 @@ export const SubjectsView: React.FC = () => {
         {currentSubject && (
           <div className="lg:col-span-8 space-y-5">
             {/* Subject Detail Header Card */}
-            <div className="p-5 sm:p-6 rounded-2xl bg-[#EBE8E1]/90 backdrop-blur-xl border border-[#DDD8CE] shadow-[0_4px_20px_rgba(30,25,15,0.03)] space-y-4">
+            <div className="p-5 sm:p-6 rounded-2xl bg-[#EBE8E1]/92 backdrop-blur-xl border border-[#C5BEAF] shadow-[0_12px_32px_-4px_rgba(20,30,15,0.12),0_4px_14px_-2px_rgba(20,30,15,0.06)] space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2.5 mb-1.5">
@@ -417,12 +417,12 @@ export const SubjectsView: React.FC = () => {
                 return (
                   <div
                     key={chapter.id}
-                    className="rounded-2xl bg-[#EBE8E1]/90 backdrop-blur-xl border border-[#DDD8CE] shadow-[0_4px_20px_rgba(30,25,15,0.03)] overflow-hidden"
+                    className="rounded-2xl bg-[#EBE8E1]/92 backdrop-blur-xl border border-[#C5BEAF] shadow-[0_10px_28px_-4px_rgba(20,30,15,0.10)] overflow-hidden"
                   >
                     {/* Chapter Header */}
                     <div
                       onClick={() => toggleChapter(chapter.id)}
-                      className="p-4 bg-[#E4E0D6] hover:bg-[#DDD8CB] cursor-pointer flex items-center justify-between transition-colors border-b border-[#DDD8CE]"
+                      className="p-4 bg-[#E4E0D6] hover:bg-[#DDD8CB] cursor-pointer flex items-center justify-between transition-colors border-b border-[#C5BEAF]"
                     >
                       <div className="flex items-center gap-3">
                         <button className="text-stone-500 hover:text-stone-900">
@@ -610,8 +610,8 @@ export const SubjectsView: React.FC = () => {
       {/* Revision Notes Modal */}
       {activeTopicForNotes && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/40 backdrop-blur-xs animate-in fade-in">
-          <div className="w-full max-w-lg bg-[#EBE8E1] border border-[#DDD8CE] rounded-2xl p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-[#DDD8CE]">
+          <div className="w-full max-w-lg bg-[#EBE8E1] border border-[#C5BEAF] rounded-2xl p-6 shadow-[0_25px_60px_-12px_rgba(15,25,10,0.25)] space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-[#C5BEAF]">
               <h3 className="font-bold text-base text-stone-900 font-serif">
                 Revision Notes: {activeTopicForNotes.topic.name}
               </h3>
@@ -666,7 +666,7 @@ export const SubjectsView: React.FC = () => {
       {/* Edit Subject Modal */}
       {isEditingSubject && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/40 backdrop-blur-xs animate-in fade-in">
-          <div className="w-full max-w-md bg-[#EBE8E1] border border-[#DDD8CE] rounded-2xl p-6 shadow-2xl space-y-4">
+          <div className="w-full max-w-md bg-[#EBE8E1] border border-[#C5BEAF] rounded-2xl p-6 shadow-[0_25px_60px_-12px_rgba(15,25,10,0.25)] space-y-4">
             <h3 className="font-bold text-base text-stone-900 font-serif">Edit Subject Details</h3>
 
             <div className="space-y-3">
@@ -744,7 +744,7 @@ export const SubjectsView: React.FC = () => {
       {/* Add Custom Subject Modal */}
       {isAddingSubject && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/40 backdrop-blur-xs animate-in fade-in">
-          <form onSubmit={handleAddSubjectSubmit} className="w-full max-w-md bg-[#EBE8E1] border border-[#DDD8CE] rounded-2xl p-6 shadow-2xl space-y-4">
+          <form onSubmit={handleAddSubjectSubmit} className="w-full max-w-md bg-[#EBE8E1] border border-[#C5BEAF] rounded-2xl p-6 shadow-[0_25px_60px_-12px_rgba(15,25,10,0.25)] space-y-4">
             <h3 className="font-bold text-base text-stone-900 font-serif">Add Custom Subject</h3>
 
             <div className="space-y-3">

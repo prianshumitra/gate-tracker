@@ -80,7 +80,7 @@ export const RevisionQueueView: React.FC = () => {
               onClick={() => setActiveFilter(tab.id)}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border ${isActive
                   ? 'bg-[#486B2C] border-[#486B2C] text-white shadow-xs'
-                  : 'bg-[#EBE8E1]/90 backdrop-blur-md border-[#DDD8CE] text-stone-700 hover:text-stone-900 hover:bg-[#DFDBD1] shadow-2xs'
+                  : 'bg-[#EBE8E1]/90 backdrop-blur-md border-[#C5BEAF] text-stone-700 hover:text-stone-900 hover:bg-[#DFDBD1] shadow-xs'
                 }`}
             >
               <span>{tab.label}</span>
@@ -98,7 +98,7 @@ export const RevisionQueueView: React.FC = () => {
       {/* Content List */}
       <div className="space-y-4">
         {filteredTopics.length === 0 ? (
-          <div className="p-12 text-center rounded-2xl bg-[#EBE8E1]/90 backdrop-blur-xl border border-[#DDD8CE] shadow-[0_4px_20px_rgba(30,25,15,0.03)] space-y-3">
+          <div className="p-12 text-center rounded-2xl bg-[#EBE8E1]/92 backdrop-blur-xl border border-[#C5BEAF] shadow-[0_12px_32px_-4px_rgba(20,30,15,0.12),0_4px_14px_-2px_rgba(20,30,15,0.06)] space-y-3">
             <div className="w-12 h-12 rounded-full bg-[#EAF2E4] text-[#486B2C] flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-6 h-6" />
             </div>
@@ -119,9 +119,9 @@ export const RevisionQueueView: React.FC = () => {
             return (
               <div
                 key={item.topic.id}
-                className={`p-5 sm:p-6 rounded-2xl border transition-all shadow-[0_4px_20px_rgba(30,25,15,0.03)] ${isOverdue
+                className={`p-5 sm:p-6 rounded-2xl border transition-all shadow-[0_8px_24px_-4px_rgba(20,30,15,0.08)] ${isOverdue
                     ? 'bg-[#FAF2DF] border-[#EEDDB8]'
-                    : 'bg-[#EBE8E1]/90 backdrop-blur-xl border-[#DDD8CE]'
+                    : 'bg-[#EBE8E1]/92 backdrop-blur-xl border-[#C5BEAF]'
                   }`}
               >
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">

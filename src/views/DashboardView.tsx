@@ -265,7 +265,7 @@ export const DashboardView: React.FC = () => {
           {/* Row of 3 Metric Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* 1. Syllabus Completion */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-[#EBE8E1]/90 backdrop-blur-xl border border-[#DDD8CE] shadow-[0_4px_20px_rgba(30,25,15,0.03)] flex items-center justify-between">
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#EBE8E1]/92 backdrop-blur-xl border border-[#C5BEAF] shadow-[0_12px_32px_-4px_rgba(20,30,15,0.12),0_4px_14px_-2px_rgba(20,30,15,0.06)] flex items-center justify-between">
               <div>
                 <div className="w-9 h-9 rounded-xl bg-[#FDF6E5] text-[#BA7E26] flex items-center justify-center">
                   <BookOpen className="w-4 h-4" />
@@ -305,7 +305,7 @@ export const DashboardView: React.FC = () => {
             </div>
 
             {/* 2. Current Streak in Crème Ochre */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-[#EBE8E1]/90 backdrop-blur-xl border border-[#DDD8CE] shadow-[0_4px_20px_rgba(30,25,15,0.03)] flex items-center justify-between">
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#EBE8E1]/92 backdrop-blur-xl border border-[#C5BEAF] shadow-[0_12px_32px_-4px_rgba(20,30,15,0.12),0_4px_14px_-2px_rgba(20,30,15,0.06)] flex items-center justify-between">
               <div>
                 <div className="w-9 h-9 rounded-xl bg-[#FDF6E5] text-[#C68A2C] flex items-center justify-center">
                   <Flame className="w-4 h-4 fill-[#C68A2C]" />
@@ -338,7 +338,7 @@ export const DashboardView: React.FC = () => {
             </div>
 
             {/* 3. Revision Due in Sap Green */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-[#EBE8E1]/90 backdrop-blur-xl border border-[#DDD8CE] shadow-[0_4px_20px_rgba(30,25,15,0.03)] flex items-center justify-between">
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#EBE8E1]/92 backdrop-blur-xl border border-[#C5BEAF] shadow-[0_12px_32px_-4px_rgba(20,30,15,0.12),0_4px_14px_-2px_rgba(20,30,15,0.06)] flex items-center justify-between">
               <div>
                 <div className="w-9 h-9 rounded-xl bg-[#EAF2E4] text-[#486B2C] flex items-center justify-center">
                   <Clock className="w-4 h-4" />
@@ -367,7 +367,7 @@ export const DashboardView: React.FC = () => {
           </div>
 
           {/* Subject Progress Table */}
-          <div className="p-5 rounded-2xl bg-[#EBE8E1]/90 backdrop-blur-xl border border-[#DDD8CE] shadow-[0_4px_20px_rgba(30,25,15,0.03)] space-y-4">
+          <div className="p-5 rounded-2xl bg-[#EBE8E1]/92 backdrop-blur-xl border border-[#C5BEAF] shadow-[0_12px_32px_-4px_rgba(20,30,15,0.12),0_4px_14px_-2px_rgba(20,30,15,0.06)] space-y-4">
             <div className="flex items-center justify-between pb-1">
               <h3 className="font-bold text-sm text-stone-900">
                 Subject Progress
@@ -454,7 +454,7 @@ export const DashboardView: React.FC = () => {
         {/* Right 4 Columns on XL: Study Calendar, Study Consistency, Quick Insights */}
         <div className="xl:col-span-4 space-y-5">
           {/* 1. Study Calendar Card */}
-          <div className="p-5 rounded-2xl bg-[#EBE8E1]/90 backdrop-blur-xl border border-[#DDD8CE] shadow-[0_4px_20px_rgba(30,25,15,0.03)] space-y-4">
+          <div className="p-5 rounded-2xl bg-[#EBE8E1]/92 backdrop-blur-xl border border-[#C5BEAF] shadow-[0_12px_32px_-4px_rgba(20,30,15,0.12),0_4px_14px_-2px_rgba(20,30,15,0.06)] space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-sm text-stone-900">
                 Study Calendar
@@ -599,7 +599,7 @@ export const DashboardView: React.FC = () => {
           </div>
 
           {/* 2. Study Consistency Heatmap Card */}
-          <div className="p-5 rounded-2xl bg-[#EBE8E1]/90 backdrop-blur-xl border border-[#DDD8CE] shadow-[0_4px_20px_rgba(30,25,15,0.03)] space-y-4">
+          <div className="p-5 rounded-2xl bg-[#EBE8E1]/92 backdrop-blur-xl border border-[#C5BEAF] shadow-[0_12px_32px_-4px_rgba(20,30,15,0.12),0_4px_14px_-2px_rgba(20,30,15,0.06)] space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-sm text-stone-900">
                 Study Consistency
@@ -670,7 +670,7 @@ export const DashboardView: React.FC = () => {
           </div>
 
           {/* 3. Quick Insights Card */}
-          <div className="p-5 rounded-2xl bg-[#EBE8E1]/90 backdrop-blur-xl border border-[#DDD8CE] shadow-[0_4px_20px_rgba(30,25,15,0.03)] space-y-4">
+          <div className="p-5 rounded-2xl bg-[#EBE8E1]/92 backdrop-blur-xl border border-[#C5BEAF] shadow-[0_12px_32px_-4px_rgba(20,30,15,0.12),0_4px_14px_-2px_rgba(20,30,15,0.06)] space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-sm text-stone-900 flex items-center gap-1.5">
                 <span className="text-[#C48D2E]">✦</span>
