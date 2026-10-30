@@ -22,6 +22,7 @@ import { ActiveTab } from './types';
 
 const MainLayout: React.FC = () => {
   const { activeTab, setActiveTab } = useApp();
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
@@ -53,35 +54,46 @@ const MainLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8F5EB] text-[#1D2417] flex flex-col md:flex-row antialiased relative selection:bg-[#F6E3B4] selection:text-[#523A10]">
-      {/* Top right decorative warm glow arc in Crème Ochre */}
-      <div className="fixed top-0 right-0 w-[420px] h-[420px] pointer-events-none rounded-bl-full bg-gradient-to-bl from-[#F5E2B3]/50 via-[#F8ECCD]/25 to-transparent z-0" />
+    <div className="min-h-screen bg-[#F8F5EB] text-[#1D2417] flex flex-col md:flex-row antialiased relative selection:bg-[#F6E3B4] selection:text-[#523A10] overflow-x-hidden">
+      {/* Scenic Misty Mountain Sunrise Wallpaper Background */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat opacity-80"
+        style={{ backgroundImage: `url('/bg-mountains.jpg')` }}
+      />
+      {/* Soft warm daylight overlay for perfect text contrast */}
+      <div className="fixed inset-0 pointer-events-none z-0 bg-[#F8F5EB]/45 backdrop-blur-[1.5px]" />
 
       {/* Floating iPhone Dynamic Island */}
       <DynamicIsland />
 
-      {/* Sidebar for Desktop & Drawer for Mobile */}
+      {/* Floating Dynamic macOS Sidebar (Compresses when not clicked, expands when clicked) */}
       <Sidebar
+        isExpanded={isSidebarExpanded}
+        setIsExpanded={setIsSidebarExpanded}
         isMobileOpen={isMobileMenuOpen}
         onCloseMobile={() => setIsMobileMenuOpen(false)}
       />
 
-      {/* Main Content Area */}
-      <div className="flex-1 md:pl-56 lg:pl-60 flex flex-col min-h-screen pb-16 md:pb-0 z-10">
+      {/* Main Content Area - Clearly differentiated and separated with dynamic gutter */}
+      <div
+        className={`flex-1 flex flex-col min-h-screen pb-16 md:pb-6 z-10 transition-[padding] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isSidebarExpanded ? 'md:pl-[272px]' : 'md:pl-[96px]'
+        }`}
+      >
         {/* Top Header */}
         <Header
           onOpenSearch={() => setIsCommandPaletteOpen(true)}
           onToggleMobileMenu={() => setIsMobileMenuOpen(prev => !prev)}
         />
 
-        {/* View Content */}
-        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-4 w-full">
+        {/* View Content Canvas */}
+        <main className="flex-1 px-3 sm:px-6 lg:px-8 py-2 w-full max-w-[1400px]">
           {renderActiveView()}
         </main>
       </div>
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 inset-x-0 z-40 bg-[#F8F5EB]/95 backdrop-blur-md border-t border-[#EDE4D0] md:hidden flex items-center justify-around h-14 px-2">
+      <nav className="fixed bottom-0 inset-x-0 z-40 bg-[#FAF7F0]/90 backdrop-blur-xl border-t border-white/60 md:hidden flex items-center justify-around h-14 px-2 shadow-lg">
         {mobileNavItems.map(item => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
@@ -90,7 +102,7 @@ const MainLayout: React.FC = () => {
               key={item.id}
               onClick={() => setActiveTab(item.id)}
               className={`flex flex-col items-center justify-center flex-1 py-1 transition-colors ${
-                isActive ? 'text-stone-900 font-bold' : 'text-stone-400 hover:text-stone-700'
+                isActive ? 'text-[#1D2417] font-bold' : 'text-[#7A8072] hover:text-[#1D2417]'
               }`}
             >
               <Icon className="w-4 h-4 mb-0.5" />

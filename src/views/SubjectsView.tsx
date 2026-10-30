@@ -242,19 +242,17 @@ export const SubjectsView: React.FC = () => {
                 <div
                   key={subj.id}
                   onClick={() => setSelectedSubjectId(subj.id)}
-                  className={`p-3.5 rounded-2xl border transition-all cursor-pointer group ${
-                    isSelected
+                  className={`p-3.5 rounded-2xl border transition-all cursor-pointer group ${isSelected
                       ? 'bg-[#F6E3B4] border-[#E5CA8F] text-[#221C11] shadow-xs ring-1 ring-[#C68A2C]/20'
                       : 'bg-white border-[#EDE4D0] hover:border-[#DDD2BA] hover:bg-[#FAF7F0] text-stone-700 shadow-[0_2px_8px_rgba(60,50,30,0.02)]'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className={`text-xs font-mono font-bold shrink-0 px-2 py-0.5 rounded-md border ${
-                        isSelected
+                      <span className={`text-xs font-mono font-bold shrink-0 px-2 py-0.5 rounded-md border ${isSelected
                           ? 'bg-[#221C11] text-[#F8F5EB] border-[#221C11]'
                           : 'bg-[#F8F5EB] text-stone-900 border-[#EDE4D0]'
-                      }`}>
+                        }`}>
                         {subj.code}
                       </span>
                       <h4 className="font-bold text-sm truncate">
@@ -303,9 +301,8 @@ export const SubjectsView: React.FC = () => {
                   {/* Progress bar */}
                   <div className={`w-full h-1.5 rounded-full overflow-hidden ${isSelected ? 'bg-[#E5D7B7]' : 'bg-[#ECE4D2]'}`}>
                     <div
-                      className={`h-full rounded-full transition-all duration-300 ${
-                        pct === 100 ? 'bg-[#486B2C]' : 'bg-[#486B2C]'
-                      }`}
+                      className={`h-full rounded-full transition-all duration-300 ${pct === 100 ? 'bg-[#486B2C]' : 'bg-[#486B2C]'
+                        }`}
                       style={{ width: `${pct}%` }}
                     />
                   </div>
@@ -476,11 +473,10 @@ export const SubjectsView: React.FC = () => {
                             return (
                               <div
                                 key={topic.id}
-                                className={`p-3 rounded-xl transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-                                  isDone
+                                className={`p-3 rounded-xl transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${isDone
                                     ? 'bg-[#FAF7F0]/40 text-stone-400'
                                     : 'hover:bg-[#FAF7F0] text-stone-800'
-                                }`}
+                                  }`}
                               >
                                 {/* Left: Checkbox + Topic Name */}
                                 <div className="flex items-start sm:items-center gap-3 flex-1 min-w-0">
@@ -504,9 +500,8 @@ export const SubjectsView: React.FC = () => {
                                   <div className="min-w-0 flex-1">
                                     <div className="flex flex-wrap items-center gap-2">
                                       <span
-                                        className={`text-sm font-semibold ${
-                                          isDone ? 'line-through text-stone-400' : 'text-stone-900'
-                                        }`}
+                                        className={`text-sm font-semibold ${isDone ? 'line-through text-stone-400' : 'text-stone-900'
+                                          }`}
                                       >
                                         {topic.name}
                                       </span>
@@ -588,11 +583,10 @@ export const SubjectsView: React.FC = () => {
                                         topic
                                       })
                                     }
-                                    className={`p-1.5 rounded-lg border text-xs flex items-center gap-1 transition-colors ${
-                                      topic.notes
+                                    className={`p-1.5 rounded-lg border text-xs flex items-center gap-1 transition-colors ${topic.notes
                                         ? 'bg-[#FDF6E5] border-[#EEDDB8] text-[#8E5B13]'
                                         : 'bg-white border-[#EDE4D0] text-stone-500 hover:text-stone-900 hover:bg-[#FAF7F0]'
-                                    }`}
+                                      }`}
                                     title="Add or edit revision notes"
                                   >
                                     <FileText className="w-3.5 h-3.5" />

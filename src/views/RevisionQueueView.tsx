@@ -78,17 +78,15 @@ export const RevisionQueueView: React.FC = () => {
             <button
               key={tab.id}
               onClick={() => setActiveFilter(tab.id)}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border ${
-                isActive
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border ${isActive
                   ? 'bg-[#486B2C] border-[#486B2C] text-white shadow-xs'
                   : 'bg-white border-[#EDE4D0] text-stone-600 hover:text-stone-900 hover:bg-[#FAF7F0] shadow-2xs'
-              }`}
+                }`}
             >
               <span>{tab.label}</span>
               <span
-                className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
-                  isActive ? 'bg-[#385522] text-white' : 'bg-[#FAF7F0] border border-[#EDE4D0] text-stone-700'
-                }`}
+                className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${isActive ? 'bg-[#385522] text-white' : 'bg-[#FAF7F0] border border-[#EDE4D0] text-stone-700'
+                  }`}
               >
                 {tab.count}
               </span>
@@ -109,8 +107,8 @@ export const RevisionQueueView: React.FC = () => {
               {activeFilter === 'overdue'
                 ? 'Excellent work! No overdue revisions in your backlog.'
                 : activeFilter === 'due_today'
-                ? 'All scheduled revisions for today are complete. Keep up the consistency!'
-                : 'No topics match the selected filter criterion.'}
+                  ? 'All scheduled revisions for today are complete. Keep up the consistency!'
+                  : 'No topics match the selected filter criterion.'}
             </p>
           </div>
         ) : (
@@ -121,11 +119,10 @@ export const RevisionQueueView: React.FC = () => {
             return (
               <div
                 key={item.topic.id}
-                className={`p-5 sm:p-6 rounded-2xl border transition-all shadow-[0_2px_12px_rgba(60,50,30,0.02)] ${
-                  isOverdue
+                className={`p-5 sm:p-6 rounded-2xl border transition-all shadow-[0_2px_12px_rgba(60,50,30,0.02)] ${isOverdue
                     ? 'bg-[#FAF7F0] border-[#EEDDB8]'
                     : 'bg-white border-[#EDE4D0]'
-                }`}
+                  }`}
               >
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                   {/* Topic Metadata & Breadcrumb */}
@@ -190,17 +187,16 @@ export const RevisionQueueView: React.FC = () => {
                               [item.topic.id]: lvl
                             }))
                           }
-                          className={`px-2 py-1 rounded-lg capitalize transition-colors text-[11px] font-bold ${
-                            currentConf === lvl
+                          className={`px-2 py-1 rounded-lg capitalize transition-colors text-[11px] font-bold ${currentConf === lvl
                               ? lvl === 'strong'
                                 ? 'bg-[#486B2C] text-white shadow-xs'
                                 : lvl === 'good'
-                                ? 'bg-[#385522] text-white shadow-xs'
-                                : lvl === 'average'
-                                ? 'bg-[#C68A2C] text-white shadow-xs'
-                                : 'bg-[#8E5B13] text-white shadow-xs'
+                                  ? 'bg-[#385522] text-white shadow-xs'
+                                  : lvl === 'average'
+                                    ? 'bg-[#C68A2C] text-white shadow-xs'
+                                    : 'bg-[#8E5B13] text-white shadow-xs'
                               : 'text-stone-600 hover:text-stone-900 hover:bg-[#F2EBDA]'
-                          }`}
+                            }`}
                         >
                           {lvl}
                         </button>

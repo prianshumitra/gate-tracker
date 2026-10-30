@@ -328,9 +328,8 @@ export const DashboardView: React.FC = () => {
                   return (
                     <div
                       key={i}
-                      className={`w-1.5 rounded-full transition-all duration-300 ${
-                        hasActivity ? 'bg-[#C68A2C]' : 'bg-[#ECE4D2]'
-                      }`}
+                      className={`w-1.5 rounded-full transition-all duration-300 ${hasActivity ? 'bg-[#C68A2C]' : 'bg-[#ECE4D2]'
+                        }`}
                       style={{ height: `${hasActivity ? h : 6}px` }}
                     />
                   );
@@ -425,9 +424,8 @@ export const DashboardView: React.FC = () => {
                     <div className="col-span-3 flex items-center gap-1.5 px-0.5">
                       <div className="flex-1 h-1.5 bg-[#ECE4D2] rounded-full overflow-hidden">
                         <div
-                          className={`h-full rounded-full ${
-                            isHighCompletion ? 'bg-[#486B2C]' : 'bg-[#C68A2C]'
-                          }`}
+                          className={`h-full rounded-full ${isHighCompletion ? 'bg-[#486B2C]' : 'bg-[#C68A2C]'
+                            }`}
                           style={{ width: `${sub.completion}%` }}
                         />
                       </div>
@@ -559,13 +557,12 @@ export const DashboardView: React.FC = () => {
                     className="flex flex-col items-center justify-center cursor-pointer group"
                   >
                     <div
-                      className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-semibold ${
-                        isToday
+                      className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-semibold ${isToday
                           ? 'bg-[#3E5C38] text-white shadow-xs'
                           : isNextMonth
-                          ? 'text-stone-300'
-                          : 'text-stone-700 group-hover:bg-stone-100'
-                      }`}
+                            ? 'text-stone-300'
+                            : 'text-stone-700 group-hover:bg-stone-100'
+                        }`}
                     >
                       {item.day}
                     </div>

@@ -41,13 +41,16 @@ body {
   width: 5px;
   height: 5px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: rgba(142, 91, 19, 0.2);
   border-radius: 9999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(72, 107, 44, 0.4);
 }
@@ -62,10 +65,12 @@ body {
     transform: scale(0.92);
     opacity: 0.8;
   }
+
   60% {
     transform: scale(1.02);
     opacity: 1;
   }
+
   100% {
     transform: scale(1);
     opacity: 1;
@@ -77,10 +82,13 @@ body {
 }
 
 @keyframes pulse-dot {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
+
   50% {
     opacity: 0.5;
     transform: scale(1.25);

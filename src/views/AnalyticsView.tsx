@@ -218,39 +218,39 @@ export const AnalyticsView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-300">
+    <div className="space-y-8 macos-fade-in max-w-7xl mx-auto pb-8">
       {/* Executive Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#EDE4D0] dark:border-stone-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#E8EFE3]">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1.5">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#FAF4E4] text-[#8E5B13] border border-[#EEDDB8]">
               <Sparkles className="w-3.5 h-3.5 text-[#C68A2C]" />
               GATE 2027 Intelligence Deck
             </span>
-            <span className="text-xs text-stone-400">•</span>
-            <span className="text-xs text-stone-500 font-medium">
+            <span className="text-xs text-[#8B9883]">•</span>
+            <span className="text-xs text-[#52604A] font-medium">
               {daysLeftExam} Days Remaining to Exam
             </span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1D2417] dark:text-stone-100 tracking-tight font-serif flex items-center gap-2.5">
+          <h2 className="text-2xl sm:text-3xl font-black text-[#13200F] tracking-tight font-serif flex items-center gap-2.5">
             <BarChart3 className="w-6 h-6 text-[#486B2C]" />
             Preparation Analytics
           </h2>
-          <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-400 mt-1 max-w-2xl">
+          <p className="text-xs sm:text-sm text-[#485341] mt-1 max-w-2xl font-medium">
             Real-time diagnostics on syllabus coverage, spaced repetition retention rates, and subject preparedness matrices.
           </p>
         </div>
 
-        {/* Toolbar: Time Range Selector */}
-        <div className="flex items-center gap-1.5 self-start md:self-auto bg-[#F1EADA] dark:bg-stone-900 p-1 rounded-xl border border-[#EDE4D0] dark:border-stone-800 text-xs font-semibold shadow-xs">
+        {/* Toolbar: Time Range Selector in Frosted Glass Pill Dock */}
+        <div className="flex items-center gap-1.5 self-start md:self-auto bg-white/70 backdrop-blur-xl p-1.5 rounded-2xl border border-white/80 shadow-xs text-xs font-semibold">
           {(['7d', '30d', '90d', 'all'] as const).map(range => (
             <button
               key={range}
               onClick={() => setTimeRange(range)}
-              className={`px-3 py-1.5 rounded-lg transition-all ${
+              className={`px-3.5 py-1.5 rounded-xl transition-all duration-200 cursor-pointer ${
                 timeRange === range
-                  ? 'bg-[#486B2C] text-white shadow-xs font-bold'
-                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
+                  ? 'bg-[#F6E3A1] text-[#1D2417] shadow-xs font-bold'
+                  : 'text-[#4A5543] hover:text-[#13200F] hover:bg-white/50'
               }`}
             >
               {range === '7d' ? '7 Days' : range === '30d' ? '30 Days' : range === '90d' ? '90 Days' : 'All Time'}
@@ -259,117 +259,125 @@ export const AnalyticsView: React.FC = () => {
         </div>
       </div>
 
-      {/* Top 4 KPI Executive Metric Cards */}
+      {/* Top 4 KPI Executive Metric Cards in macOS Frosted Glass */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* KPI 1: Overall Syllabus Completion */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-stone-900 border border-[#EDE4D0] dark:border-stone-800 shadow-[0_2px_8px_rgba(40,30,20,0.03)] flex flex-col justify-between">
-          <div className="flex items-center justify-between text-xs text-stone-500 font-bold uppercase tracking-wider mb-2">
+        <div className="p-5 sm:p-6 rounded-[24px] bg-white/75 backdrop-blur-2xl border border-white/80 shadow-[0_20px_45px_rgba(20,35,15,0.05),0_1px_3px_rgba(0,0,0,0.04)] flex flex-col justify-between">
+          <div className="flex items-center justify-between text-xs text-[#52604A] font-bold uppercase tracking-wider mb-2">
             <span>Syllabus Coverage</span>
-            <TrendingUp className="w-4 h-4 text-[#486B2C]" />
+            <div className="p-1.5 rounded-xl bg-[#EAF2E4] text-[#486B2C]">
+              <TrendingUp className="w-4 h-4" />
+            </div>
           </div>
           <div>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-[#1D2417] dark:text-stone-100 font-serif">
+              <span className="text-3xl font-extrabold text-[#13200F] font-serif">
                 {syllabusPct}%
               </span>
-              <span className="text-xs font-semibold text-stone-500">
+              <span className="text-xs font-semibold text-[#63725B]">
                 ({completedTopics}/{totalTopics} topics)
               </span>
             </div>
-            <div className="mt-2 w-full h-2 bg-[#EDE4D0] dark:bg-stone-800 rounded-full overflow-hidden">
+            <div className="mt-3 w-full h-2 bg-[#E2ECD9]/70 rounded-full overflow-hidden p-0.5">
               <div
                 className="h-full bg-[#486B2C] rounded-full transition-all duration-700"
                 style={{ width: `${syllabusPct}%` }}
               />
             </div>
           </div>
-          <div className="mt-3 pt-2 border-t border-[#EDE4D0]/60 dark:border-stone-800 text-[11px] text-stone-500 flex items-center justify-between">
-            <span>Remaining: <strong>{remainingTopics} topics</strong></span>
-            <span className="text-[#486B2C] font-semibold">GATE CS Core</span>
+          <div className="mt-4 pt-2.5 border-t border-[#E8EFE3] text-[11px] text-[#52604A] flex items-center justify-between">
+            <span>Remaining: <strong className="text-[#13200F]">{remainingTopics} topics</strong></span>
+            <span className="text-[#385522] font-semibold bg-[#EAF2E4] px-2 py-0.5 rounded-full border border-[#CFE1C5]">GATE CS Core</span>
           </div>
         </div>
 
         {/* KPI 2: Study Consistency Index */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-stone-900 border border-[#EDE4D0] dark:border-stone-800 shadow-[0_2px_8px_rgba(40,30,20,0.03)] flex flex-col justify-between">
-          <div className="flex items-center justify-between text-xs text-stone-500 font-bold uppercase tracking-wider mb-2">
+        <div className="p-5 sm:p-6 rounded-[24px] bg-white/75 backdrop-blur-2xl border border-white/80 shadow-[0_20px_45px_rgba(20,35,15,0.05),0_1px_3px_rgba(0,0,0,0.04)] flex flex-col justify-between">
+          <div className="flex items-center justify-between text-xs text-[#52604A] font-bold uppercase tracking-wider mb-2">
             <span>Study Consistency</span>
-            <Calendar className="w-4 h-4 text-[#486B2C]" />
+            <div className="p-1.5 rounded-xl bg-[#EAF2E4] text-[#486B2C]">
+              <Calendar className="w-4 h-4" />
+            </div>
           </div>
           <div>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-[#486B2C] font-serif">
+              <span className="text-3xl font-extrabold text-[#385522] font-serif">
                 {consistencyPct}%
               </span>
-              <span className="text-xs font-semibold text-stone-500">
+              <span className="text-xs font-semibold text-[#63725B]">
                 Active Habit Score
               </span>
             </div>
-            <div className="mt-2 w-full h-2 bg-[#EDE4D0] dark:bg-stone-800 rounded-full overflow-hidden">
+            <div className="mt-3 w-full h-2 bg-[#E2ECD9]/70 rounded-full overflow-hidden p-0.5">
               <div
-                className="h-full bg-[#486B2C] rounded-full transition-all duration-700"
+                className="h-full bg-[#385522] rounded-full transition-all duration-700"
                 style={{ width: `${consistencyPct}%` }}
               />
             </div>
           </div>
-          <div className="mt-3 pt-2 border-t border-[#EDE4D0]/60 dark:border-stone-800 text-[11px] text-stone-500 flex items-center justify-between">
-            <span>Active: <strong>{uniqueActiveDates.length} of {elapsedDays}d</strong></span>
-            <span className="text-[#8E5B13] font-bold">Streak: {streakStats.currentStreak}d 🔥</span>
+          <div className="mt-4 pt-2.5 border-t border-[#E8EFE3] text-[11px] text-[#52604A] flex items-center justify-between">
+            <span>Active: <strong className="text-[#13200F]">{uniqueActiveDates.length} of {elapsedDays}d</strong></span>
+            <span className="text-[#8E5B13] font-bold bg-[#FAF4E4] px-2 py-0.5 rounded-full border border-[#EEDDB8]">Streak: {streakStats.currentStreak}d 🔥</span>
           </div>
         </div>
 
         {/* KPI 3: Retention & Spaced Repetition Rate */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-stone-900 border border-[#EDE4D0] dark:border-stone-800 shadow-[0_2px_8px_rgba(40,30,20,0.03)] flex flex-col justify-between">
-          <div className="flex items-center justify-between text-xs text-stone-500 font-bold uppercase tracking-wider mb-2">
+        <div className="p-5 sm:p-6 rounded-[24px] bg-white/75 backdrop-blur-2xl border border-white/80 shadow-[0_20px_45px_rgba(20,35,15,0.05),0_1px_3px_rgba(0,0,0,0.04)] flex flex-col justify-between">
+          <div className="flex items-center justify-between text-xs text-[#52604A] font-bold uppercase tracking-wider mb-2">
             <span>Retention Reinforcement</span>
-            <RotateCcw className="w-4 h-4 text-[#C68A2C]" />
+            <div className="p-1.5 rounded-xl bg-[#FBF3DC] text-[#C68A2C]">
+              <RotateCcw className="w-4 h-4" />
+            </div>
           </div>
           <div>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-[#8E5B13] font-serif">
+              <span className="text-3xl font-extrabold text-[#966418] font-serif">
                 {retentionScore}%
               </span>
-              <span className="text-xs font-semibold text-stone-500">
+              <span className="text-xs font-semibold text-[#63725B]">
                 Reinforced (2+ Rev)
               </span>
             </div>
-            <div className="mt-2 w-full h-2 bg-[#EDE4D0] dark:bg-stone-800 rounded-full overflow-hidden">
+            <div className="mt-3 w-full h-2 bg-[#F3EAD3]/70 rounded-full overflow-hidden p-0.5">
               <div
                 className="h-full bg-[#C68A2C] rounded-full transition-all duration-700"
                 style={{ width: `${retentionScore}%` }}
               />
             </div>
           </div>
-          <div className="mt-3 pt-2 border-t border-[#EDE4D0]/60 dark:border-stone-800 text-[11px] text-stone-500 flex items-center justify-between">
-            <span>Reinforced: <strong>{reinforcedTopics} topics</strong></span>
-            <span className="text-stone-400">1st Rev: {firstRevisionTopics}</span>
+          <div className="mt-4 pt-2.5 border-t border-[#E8EFE3] text-[11px] text-[#52604A] flex items-center justify-between">
+            <span>Reinforced: <strong className="text-[#13200F]">{reinforcedTopics} topics</strong></span>
+            <span className="text-[#63725B] font-medium">1st Rev: {firstRevisionTopics}</span>
           </div>
         </div>
 
         {/* KPI 4: Attention & Weak Concepts */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-stone-900 border border-[#EDE4D0] dark:border-stone-800 shadow-[0_2px_8px_rgba(40,30,20,0.03)] flex flex-col justify-between">
-          <div className="flex items-center justify-between text-xs text-stone-500 font-bold uppercase tracking-wider mb-2">
+        <div className="p-5 sm:p-6 rounded-[24px] bg-white/75 backdrop-blur-2xl border border-white/80 shadow-[0_20px_45px_rgba(20,35,15,0.05),0_1px_3px_rgba(0,0,0,0.04)] flex flex-col justify-between">
+          <div className="flex items-center justify-between text-xs text-[#52604A] font-bold uppercase tracking-wider mb-2">
             <span>At-Risk / Attention</span>
-            <AlertTriangle className="w-4 h-4 text-[#8E5B13]" />
+            <div className="p-1.5 rounded-xl bg-[#FBF0D3] text-[#8E5B13]">
+              <AlertTriangle className="w-4 h-4" />
+            </div>
           </div>
           <div>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-extrabold text-[#8E5B13] font-serif">
                 {weakTopics.length + neglectedTopics.length}
               </span>
-              <span className="text-xs font-semibold text-stone-500">
+              <span className="text-xs font-semibold text-[#63725B]">
                 Action Items
               </span>
             </div>
-            <div className="mt-2 flex items-center gap-1.5 text-[11px] text-stone-500">
-              <span className="px-2 py-0.5 rounded-md bg-[#FBF0D3] text-[#8E5B13] font-bold">
+            <div className="mt-3 flex items-center gap-2 text-[11px]">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#FBF0D3] text-[#8E5B13] font-bold border border-[#EED7A2]">
                 {weakTopics.length} Weak
               </span>
-              <span className="px-2 py-0.5 rounded-md bg-[#FAF7F2] text-stone-600 border border-[#EDE4D0]">
+              <span className="px-2.5 py-0.5 rounded-full bg-white text-[#52604A] font-semibold border border-[#D5E2CD]">
                 {neglectedTopics.length} Neglected
               </span>
             </div>
           </div>
-          <div className="mt-3 pt-2 border-t border-[#EDE4D0]/60 dark:border-stone-800 text-[11px] text-stone-500 flex items-center justify-between">
+          <div className="mt-4 pt-2.5 border-t border-[#E8EFE3] text-[11px] text-[#52604A] flex items-center justify-between">
             <span>Target Revision Buffer</span>
             <span className="text-[#8E5B13] font-semibold">Priority Review</span>
           </div>
@@ -378,41 +386,41 @@ export const AnalyticsView: React.FC = () => {
 
       {/* Automated Grounded AI Insights Banner */}
       {insights.length > 0 && (
-        <div className="p-6 rounded-2xl bg-white dark:bg-stone-900 border border-[#EDE4D0] dark:border-stone-800 shadow-[0_2px_8px_rgba(40,30,20,0.03)] space-y-4">
+        <div className="p-6 sm:p-7 rounded-[28px] bg-white/75 backdrop-blur-2xl border border-white/80 shadow-[0_20px_50px_rgba(20,35,15,0.06),0_1px_3px_rgba(0,0,0,0.04)] space-y-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-[#FAF4E4] text-[#8E5B13] border border-[#EEDDB8]">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-2xl bg-[#FAF4E4] text-[#8E5B13] border border-[#EEDDB8] shadow-xs">
                 <Sparkles className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="font-extrabold text-sm text-[#1D2417] dark:text-stone-100 uppercase tracking-wider font-serif">
+                <h3 className="font-extrabold text-sm text-[#13200F] uppercase tracking-wider font-serif">
                   Automated Study Coach & Strategy Notes
                 </h3>
-                <p className="text-xs text-stone-500">
+                <p className="text-xs text-[#52604A]">
                   Synthesized recommendations based on your recent activity logs and syllabus completion pace
                 </p>
               </div>
             </div>
-            <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#EAF2E4] text-[#385522] border border-[#D3E3C9]">
+            <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-[#EAF2E4] text-[#385522] border border-[#CFE1C5]">
               Live Diagnostics
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
             {insights.map((insight, idx) => (
               <div
                 key={idx}
-                className={`p-3.5 rounded-xl border flex flex-col justify-between text-xs transition-all ${
+                className={`p-4 rounded-2xl border flex flex-col justify-between text-xs transition-all ${
                   insight.type === 'warning'
-                    ? 'bg-[#FBF3DC]/60 dark:bg-[#C68A2C]/10 border-[#EEDDB8] dark:border-[#C68A2C]/30 text-stone-800 dark:text-stone-200'
+                    ? 'bg-[#FBF3DC]/75 border-[#EEDDB8] text-[#3E3018]'
                     : insight.type === 'strategy'
-                    ? 'bg-[#FAF7F2] dark:bg-stone-950/60 border-[#EDE4D0] dark:border-stone-800 text-stone-800 dark:text-stone-200'
-                    : 'bg-[#EAF2E4]/60 dark:bg-[#486B2C]/10 border-[#D3E3C9] dark:border-[#486B2C]/30 text-stone-800 dark:text-stone-200'
+                    ? 'bg-white/80 border-[#D5E2CD] text-[#222E1A]'
+                    : 'bg-[#EAF2E4]/75 border-[#CFE1C5] text-[#1D3212]'
                 }`}
               >
-                <div className="flex items-start gap-2.5 mb-2">
+                <div className="flex items-start gap-3 mb-2.5">
                   <div
-                    className={`w-2 h-2 rounded-full mt-1 shrink-0 ${
+                    className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
                       insight.type === 'warning'
                         ? 'bg-[#C68A2C]'
                         : insight.type === 'strategy'
@@ -420,16 +428,16 @@ export const AnalyticsView: React.FC = () => {
                         : 'bg-[#385522]'
                     }`}
                   />
-                  <span className="leading-relaxed font-medium">{insight.text}</span>
+                  <span className="leading-relaxed font-semibold">{insight.text}</span>
                 </div>
 
                 {insight.actionText && insight.actionTab && (
                   <button
                     onClick={() => setActiveTab(insight.actionTab as any)}
-                    className="self-end text-[11px] font-bold text-[#486B2C] hover:underline flex items-center gap-1"
+                    className="self-end text-[11px] font-bold text-[#385522] hover:underline flex items-center gap-1 cursor-pointer"
                   >
                     <span>{insight.actionText}</span>
-                    <ArrowUpRight className="w-3 h-3" />
+                    <ArrowUpRight className="w-3.5 h-3.5" />
                   </button>
                 )}
               </div>
@@ -438,24 +446,24 @@ export const AnalyticsView: React.FC = () => {
         </div>
       )}
 
-      {/* Navigation Sub-Tabs */}
-      <div className="flex items-center gap-2 border-b border-[#EDE4D0] dark:border-stone-800 pb-2">
+      {/* Navigation Sub-Tabs in macOS Frosted Pill Dock */}
+      <div className="p-1.5 rounded-2xl bg-white/65 backdrop-blur-xl border border-white/80 shadow-xs flex items-center gap-1.5">
         <button
           onClick={() => setActiveSection('overview')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
             activeSection === 'overview'
-              ? 'bg-[#486B2C] text-white shadow-xs'
-              : 'text-stone-600 dark:text-stone-400 hover:bg-[#F8F5EB] dark:hover:bg-stone-800'
+              ? 'bg-[#F6E3A1] text-[#1D2417] shadow-xs'
+              : 'text-[#4A5543] hover:text-[#13200F] hover:bg-white/50'
           }`}
         >
           Subject Preparedness Matrix
         </button>
         <button
           onClick={() => setActiveSection('memory')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
             activeSection === 'memory'
-              ? 'bg-[#486B2C] text-white shadow-xs'
-              : 'text-stone-600 dark:text-stone-400 hover:bg-[#F8F5EB] dark:hover:bg-stone-800'
+              ? 'bg-[#F6E3A1] text-[#1D2417] shadow-xs'
+              : 'text-[#4A5543] hover:text-[#13200F] hover:bg-white/50'
           }`}
         >
           Memory Retention Radar & Rhythm
@@ -464,60 +472,60 @@ export const AnalyticsView: React.FC = () => {
 
       {activeSection === 'overview' ? (
         /* Section 1: Subject Preparedness Matrix */
-        <div className="p-6 rounded-2xl bg-white dark:bg-stone-900 border border-[#EDE4D0] dark:border-stone-800 shadow-[0_2px_8px_rgba(40,30,20,0.03)] space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#EDE4D0] dark:border-stone-800">
+        <div className="p-6 sm:p-8 rounded-[28px] bg-white/75 backdrop-blur-2xl border border-white/80 shadow-[0_20px_50px_rgba(20,35,15,0.06),0_1px_3px_rgba(0,0,0,0.04)] space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#E8EFE3]">
             <div>
-              <h3 className="font-extrabold text-lg text-[#1D2417] dark:text-stone-100 font-serif">
+              <h3 className="font-extrabold text-lg text-[#13200F] font-serif">
                 GATE Subject Preparedness Matrix
               </h3>
-              <p className="text-xs text-stone-500">
+              <p className="text-xs text-[#52604A]">
                 11 CS Syllabus Subjects ranked by marks weightage, completion status, and revision health
               </p>
             </div>
 
             {/* Sort Toolbar */}
             <div className="flex items-center gap-2 text-xs">
-              <span className="text-stone-400 font-semibold">Sort by:</span>
-              <div className="flex items-center gap-1 bg-[#FAF7F2] dark:bg-stone-800 p-1 rounded-xl border border-[#EDE4D0] dark:border-stone-700">
+              <span className="text-[#63725B] font-semibold">Sort by:</span>
+              <div className="flex items-center gap-1 bg-white/80 p-1 rounded-xl border border-[#D5E2CD] shadow-xs">
                 <button
                   onClick={() => setMatrixSortBy('weightage')}
-                  className={`px-2.5 py-1 rounded-lg font-semibold transition-all ${
+                  className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                     matrixSortBy === 'weightage'
-                      ? 'bg-[#486B2C] text-white font-bold'
-                      : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                      ? 'bg-[#486B2C] text-white font-bold shadow-xs'
+                      : 'text-[#4A5543] hover:text-[#13200F]'
                   }`}
                 >
                   Weightage
                 </button>
                 <button
                   onClick={() => setMatrixSortBy('syllabus')}
-                  className={`px-2.5 py-1 rounded-lg font-semibold transition-all ${
+                  className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                     matrixSortBy === 'syllabus'
-                      ? 'bg-[#486B2C] text-white font-bold'
-                      : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                      ? 'bg-[#486B2C] text-white font-bold shadow-xs'
+                      : 'text-[#4A5543] hover:text-[#13200F]'
                   }`}
                 >
                   Coverage %
                 </button>
                 <button
                   onClick={() => setMatrixSortBy('overdue')}
-                  className={`px-2.5 py-1 rounded-lg font-semibold transition-all ${
+                  className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                     matrixSortBy === 'overdue'
-                      ? 'bg-[#C68A2C] text-white font-bold'
-                      : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                      ? 'bg-[#C68A2C] text-white font-bold shadow-xs'
+                      : 'text-[#4A5543] hover:text-[#13200F]'
                   }`}
                 >
-                  Overdue Backlog
+                  Overdue
                 </button>
                 <button
                   onClick={() => setMatrixSortBy('weak')}
-                  className={`px-2.5 py-1 rounded-lg font-semibold transition-all ${
+                  className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                     matrixSortBy === 'weak'
-                      ? 'bg-[#8E5B13] text-white font-bold'
-                      : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                      ? 'bg-[#8E5B13] text-white font-bold shadow-xs'
+                      : 'text-[#4A5543] hover:text-[#13200F]'
                   }`}
                 >
-                  Weak Concepts
+                  Weak
                 </button>
               </div>
             </div>
@@ -527,7 +535,7 @@ export const AnalyticsView: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-[#EDE4D0] dark:border-stone-800 text-stone-500 font-bold uppercase tracking-wider text-[11px]">
+                <tr className="border-b border-[#E8EFE3] text-[#63725B] font-bold uppercase tracking-wider text-[11px]">
                   <th className="py-3 px-3">Subject</th>
                   <th className="py-3 px-3">GATE Weightage</th>
                   <th className="py-3 px-3">Priority</th>
@@ -538,28 +546,28 @@ export const AnalyticsView: React.FC = () => {
                   <th className="py-3 px-3 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#EDE4D0]/60 dark:divide-stone-800/60">
+              <tbody className="divide-y divide-[#E8EFE3]/80">
                 {subjectComparison.map(s => (
                   <tr
                     key={s.id}
-                    className="hover:bg-[#FAF7F2] dark:hover:bg-stone-800/40 transition-colors group"
+                    className="hover:bg-white/60 transition-colors group"
                   >
                     {/* Subject info */}
                     <td className="py-3.5 px-3">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono font-bold text-stone-900 dark:text-stone-200 px-2 py-0.5 rounded-md bg-[#F8F5EB] dark:bg-stone-800 border border-[#EDE4D0] dark:border-stone-700">
+                      <div className="flex items-center gap-2.5">
+                        <span className="font-mono font-bold text-[#13200F] px-2.5 py-1 rounded-lg bg-white border border-[#D5E2CD] shadow-xs">
                           {s.code}
                         </span>
                         <div>
-                          <div className="font-bold text-stone-900 dark:text-stone-100">{s.name}</div>
-                          <div className="text-[10px] text-stone-400">{s.total} Topics Total</div>
+                          <div className="font-bold text-[#13200F] text-xs">{s.name}</div>
+                          <div className="text-[10px] text-[#707E68]">{s.total} Topics Total</div>
                         </div>
                       </div>
                     </td>
 
                     {/* Weightage */}
-                    <td className="py-3.5 px-3 font-semibold text-stone-700 dark:text-stone-300">
-                      <span className="px-2 py-0.5 rounded-full bg-[#FAF4E4] text-[#8E5B13] border border-[#EEDDB8] font-bold">
+                    <td className="py-3.5 px-3 font-semibold text-[#2A3722]">
+                      <span className="px-2.5 py-0.5 rounded-full bg-[#FAF4E4] text-[#8E5B13] border border-[#EEDDB8] font-bold text-[11px]">
                         ~{s.weightage} Marks
                       </span>
                     </td>
@@ -567,12 +575,12 @@ export const AnalyticsView: React.FC = () => {
                     {/* Priority */}
                     <td className="py-3.5 px-3 capitalize">
                       <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
                           s.priority === 'critical'
                             ? 'bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5]'
                             : s.priority === 'high'
-                            ? 'bg-[#EAF2E4] text-[#385522] border border-[#D3E3C9]'
-                            : 'bg-[#FAF4E4] text-[#8E5B13] border border-[#EDE4D0]'
+                            ? 'bg-[#EAF2E4] text-[#385522] border border-[#CFE1C5]'
+                            : 'bg-[#FAF4E4] text-[#8E5B13] border border-[#EEDDB8]'
                         }`}
                       >
                         {s.priority}
@@ -583,17 +591,17 @@ export const AnalyticsView: React.FC = () => {
                     <td className="py-3.5 px-3">
                       <div className="space-y-1.5">
                         <div className="flex items-center justify-between text-[11px]">
-                          <span className="font-extrabold text-stone-900 dark:text-stone-100">
+                          <span className="font-extrabold text-[#13200F]">
                             {s.syllabusPercent}%
                           </span>
-                          <span className="text-stone-500 font-medium">
+                          <span className="text-[#63725B] font-medium">
                             {s.completed} of {s.total}
                           </span>
                         </div>
-                        <div className="w-full h-2 bg-[#EDE4D0] dark:bg-stone-800 rounded-full overflow-hidden flex">
+                        <div className="w-full h-2 bg-[#E2ECD9]/70 rounded-full overflow-hidden flex p-0.5">
                           {/* Reinforced portion */}
                           <div
-                            className="h-full bg-[#486B2C]"
+                            className="h-full bg-[#486B2C] rounded-full"
                             style={{
                               width: `${s.total > 0 ? (s.reinforced / s.total) * 100 : 0}%`
                             }}
@@ -601,7 +609,7 @@ export const AnalyticsView: React.FC = () => {
                           />
                           {/* Completed only once */}
                           <div
-                            className="h-full bg-[#C68A2C]"
+                            className="h-full bg-[#C68A2C] rounded-full"
                             style={{
                               width: `${
                                 s.total > 0 ? ((s.completed - s.reinforced) / s.total) * 100 : 0
@@ -614,31 +622,31 @@ export const AnalyticsView: React.FC = () => {
                     </td>
 
                     {/* Reinforced rate */}
-                    <td className="py-3.5 px-3 font-semibold text-stone-700 dark:text-stone-300">
-                      <span className="font-bold text-stone-800 dark:text-stone-200">{s.revisionPercent}%</span>
-                      <span className="text-[10px] text-stone-400 block">({s.reinforced}/{s.completed || 0})</span>
+                    <td className="py-3.5 px-3 font-semibold">
+                      <span className="font-bold text-[#13200F]">{s.revisionPercent}%</span>
+                      <span className="text-[10px] text-[#707E68] block">({s.reinforced}/{s.completed || 0})</span>
                     </td>
 
                     {/* Overdue */}
                     <td className="py-3.5 px-3">
                       {s.overdue > 0 ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5]">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5]">
                           <AlertTriangle className="w-3 h-3" />
                           {s.overdue} Overdue
                         </span>
                       ) : (
-                        <span className="text-stone-400">—</span>
+                        <span className="text-[#8B9883]">—</span>
                       )}
                     </td>
 
                     {/* Weak */}
                     <td className="py-3.5 px-3">
                       {s.weak > 0 ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FBF3DC] text-[#8E5B13] border border-[#EEDDB8]">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FBF3DC] text-[#8E5B13] border border-[#EEDDB8]">
                           {s.weak} Needs Review
                         </span>
                       ) : (
-                        <span className="text-stone-400">—</span>
+                        <span className="text-[#8B9883]">—</span>
                       )}
                     </td>
 
@@ -649,7 +657,7 @@ export const AnalyticsView: React.FC = () => {
                           setSelectedSubjectId(s.id);
                           setActiveTab('subjects', s.id);
                         }}
-                        className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white dark:bg-stone-800 border border-[#EDE4D0] text-[#486B2C] hover:bg-[#EAF2E4] transition-colors shadow-xs"
+                        className="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-white border border-[#D5E2CD] text-[#385522] hover:bg-[#EAF2E4] transition-colors shadow-xs cursor-pointer"
                       >
                         Open Syllabus →
                       </button>
@@ -664,15 +672,15 @@ export const AnalyticsView: React.FC = () => {
         /* Section 2: Memory Retention Radar & Study Rhythm */
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Day of week study rhythm (6 cols) */}
-          <div className="lg:col-span-6 p-6 rounded-2xl bg-white dark:bg-stone-900 border border-[#EDE4D0] dark:border-stone-800 shadow-[0_2px_8px_rgba(40,30,20,0.03)] space-y-4">
-            <div className="flex items-center justify-between">
+          <div className="lg:col-span-6 p-6 sm:p-7 rounded-[28px] bg-white/75 backdrop-blur-2xl border border-white/80 shadow-[0_20px_50px_rgba(20,35,15,0.06),0_1px_3px_rgba(0,0,0,0.04)] space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E8EFE3]">
               <div>
-                <h3 className="font-extrabold text-base text-[#1D2417] dark:text-stone-100 font-serif">
+                <h3 className="font-extrabold text-base text-[#13200F] font-serif">
                   Day-of-Week Study Rhythm
                 </h3>
-                <p className="text-xs text-stone-500">Distribution of learning events across days of the week</p>
+                <p className="text-xs text-[#52604A]">Distribution of learning events across days of the week</p>
               </div>
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#FAF4E4] text-[#8E5B13] border border-[#EEDDB8]">
+              <span className="text-[11px] font-bold px-3 py-0.5 rounded-full bg-[#FAF4E4] text-[#8E5B13] border border-[#EEDDB8]">
                 Peak: {dayLabels[peakDayIdx]}
               </span>
             </div>
@@ -685,18 +693,18 @@ export const AnalyticsView: React.FC = () => {
 
                 return (
                   <div key={label} className="flex-1 flex flex-col items-center gap-2">
-                    <span className={`text-[11px] font-bold ${isPeak ? 'text-[#486B2C]' : 'text-stone-600'}`}>
+                    <span className={`text-[11px] font-bold ${isPeak ? 'text-[#385522]' : 'text-[#63725B]'}`}>
                       {count}
                     </span>
-                    <div className="w-full bg-[#FAF7F2] dark:bg-stone-800 rounded-t-lg h-36 flex items-end justify-center p-1 border border-b-0 border-[#EDE4D0] dark:border-stone-800">
+                    <div className="w-full bg-[#E2ECD9]/40 rounded-t-xl h-36 flex items-end justify-center p-1 border border-b-0 border-[#D5E2CD]">
                       <div
-                        className={`w-full rounded-xs transition-all duration-500 ${
-                          isPeak ? 'bg-[#486B2C] ring-2 ring-[#486B2C]/40' : 'bg-[#A3CD8B] hover:bg-[#679B45]'
+                        className={`w-full rounded-t-lg transition-all duration-500 ${
+                          isPeak ? 'bg-[#385522] shadow-sm' : 'bg-[#A3CD8B] hover:bg-[#679B45]'
                         }`}
                         style={{ height: `${heightPct}%` }}
                       />
                     </div>
-                    <span className={`text-xs font-semibold ${isPeak ? 'text-[#486B2C] font-bold' : 'text-stone-500'}`}>
+                    <span className={`text-xs font-semibold ${isPeak ? 'text-[#385522] font-bold' : 'text-[#63725B]'}`}>
                       {label}
                     </span>
                   </div>
@@ -704,84 +712,84 @@ export const AnalyticsView: React.FC = () => {
               })}
             </div>
 
-            <div className="pt-2 border-t border-[#EDE4D0] dark:border-stone-800 flex items-center justify-between text-xs text-stone-500">
+            <div className="pt-3 border-t border-[#E8EFE3] flex items-center justify-between text-xs text-[#52604A]">
               <span>Weekday vs Weekend Rhythm</span>
-              <span className="font-semibold text-stone-700 dark:text-stone-300">
+              <span className="font-bold text-[#13200F]">
                 {dayOfWeekCounts[1] + dayOfWeekCounts[2] + dayOfWeekCounts[3] + dayOfWeekCounts[4] + dayOfWeekCounts[5]} Weekday • {dayOfWeekCounts[0] + dayOfWeekCounts[6]} Weekend
               </span>
             </div>
           </div>
 
           {/* 4-Tier Memory Stage Progression (6 cols) */}
-          <div className="lg:col-span-6 p-6 rounded-2xl bg-white dark:bg-stone-900 border border-[#EDE4D0] dark:border-stone-800 shadow-[0_2px_8px_rgba(40,30,20,0.03)] space-y-4">
-            <div>
-              <h3 className="font-extrabold text-base text-[#1D2417] dark:text-stone-100 font-serif">
+          <div className="lg:col-span-6 p-6 sm:p-7 rounded-[28px] bg-white/75 backdrop-blur-2xl border border-white/80 shadow-[0_20px_50px_rgba(20,35,15,0.06),0_1px_3px_rgba(0,0,0,0.04)] space-y-4">
+            <div className="pb-3 border-b border-[#E8EFE3]">
+              <h3 className="font-extrabold text-base text-[#13200F] font-serif">
                 Spaced Repetition Memory Pipeline
               </h3>
-              <p className="text-xs text-stone-500">
+              <p className="text-xs text-[#52604A]">
                 Cognitive consolidation stage of all {completedTopics} completed topics
               </p>
             </div>
 
             <div className="space-y-3 text-xs">
               {/* Tier 4: Mastered */}
-              <div className="p-3.5 rounded-xl bg-[#EAF2E4] dark:bg-[#486B2C]/15 border border-[#D3E3C9] dark:border-[#486B2C]/30 flex items-center justify-between">
+              <div className="p-4 rounded-2xl bg-[#EAF2E4] border border-[#CFE1C5] flex items-center justify-between shadow-xs">
                 <div>
-                  <div className="font-bold text-[#385522] dark:text-[#EAF2E4] flex items-center gap-1.5">
+                  <div className="font-bold text-[#2E491A] flex items-center gap-2">
                     <Award className="w-4 h-4 text-[#486B2C]" />
                     Stage 4: Permanent Memory (3+ Revisions)
                   </div>
-                  <div className="text-[11px] text-stone-600 dark:text-stone-400">
+                  <div className="text-[11px] text-[#52604A] mt-0.5">
                     Highest cognitive retention; ready for mock tests
                   </div>
                 </div>
-                <span className="text-base font-extrabold text-[#486B2C]">
+                <span className="text-lg font-black text-[#385522]">
                   {flatTopics.filter(t => t.topic.revisionCount >= 3).length}
                 </span>
               </div>
 
               {/* Tier 3: Reinforced */}
-              <div className="p-3.5 rounded-xl bg-[#F8F5EB] dark:bg-stone-950/60 border border-[#EDE4D0] dark:border-stone-800 flex items-center justify-between">
+              <div className="p-4 rounded-2xl bg-white border border-[#D5E2CD] flex items-center justify-between shadow-xs">
                 <div>
-                  <div className="font-bold text-stone-900 dark:text-stone-100">
+                  <div className="font-bold text-[#13200F]">
                     Stage 3: Consolidated (2 Revisions)
                   </div>
-                  <div className="text-[11px] text-stone-500">
+                  <div className="text-[11px] text-[#63725B] mt-0.5">
                     Passed critical 7-day interval
                   </div>
                 </div>
-                <span className="text-base font-extrabold text-[#8E5B13]">
+                <span className="text-lg font-black text-[#8E5B13]">
                   {reinforcedTopics - flatTopics.filter(t => t.topic.revisionCount >= 3).length}
                 </span>
               </div>
 
               {/* Tier 2: 1 Revision */}
-              <div className="p-3.5 rounded-xl bg-[#FAF7F2] dark:bg-stone-950/40 border border-[#EDE4D0] dark:border-stone-800 flex items-center justify-between">
+              <div className="p-4 rounded-2xl bg-white/80 border border-[#D5E2CD] flex items-center justify-between shadow-xs">
                 <div>
-                  <div className="font-bold text-stone-900 dark:text-stone-100">
+                  <div className="font-bold text-[#13200F]">
                     Stage 2: Working Memory (1 Revision)
                   </div>
-                  <div className="text-[11px] text-stone-500">
+                  <div className="text-[11px] text-[#63725B] mt-0.5">
                     Initial spaced reinforcement completed
                   </div>
                 </div>
-                <span className="text-base font-extrabold text-stone-700 dark:text-stone-300">
+                <span className="text-lg font-black text-[#52604A]">
                   {firstRevisionTopics}
                 </span>
               </div>
 
               {/* Tier 1: Freshly Completed (0 revisions) */}
-              <div className="p-3.5 rounded-xl bg-[#FBF0D3]/40 dark:bg-[#C68A2C]/10 border border-[#EEDDB8] dark:border-[#C68A2C]/20 flex items-center justify-between">
+              <div className="p-4 rounded-2xl bg-[#FBF0D3]/50 border border-[#EEDDB8] flex items-center justify-between shadow-xs">
                 <div>
                   <div className="font-bold text-[#8E5B13] flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5" />
                     Stage 1: Fresh Intake (0 Revisions)
                   </div>
-                  <div className="text-[11px] text-stone-500">
+                  <div className="text-[11px] text-[#63725B] mt-0.5">
                     Vulnerable to forgetting curve; schedule review soon
                   </div>
                 </div>
-                <span className="text-base font-extrabold text-[#8E5B13]">
+                <span className="text-lg font-black text-[#8E5B13]">
                   {zeroRevisionCompleted}
                 </span>
               </div>
@@ -792,57 +800,57 @@ export const AnalyticsView: React.FC = () => {
 
       {/* Neglected & Weak Recovery Shelf */}
       {neglectedTopics.length > 0 && (
-        <div className="p-6 rounded-2xl bg-white dark:bg-stone-900 border border-[#EDE4D0] dark:border-stone-800 shadow-[0_2px_8px_rgba(40,30,20,0.03)] space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5]">
+        <div className="p-6 sm:p-7 rounded-[28px] bg-white/75 backdrop-blur-2xl border border-white/80 shadow-[0_20px_50px_rgba(20,35,15,0.06),0_1px_3px_rgba(0,0,0,0.04)] space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#E8EFE3]">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-2xl bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] shadow-xs">
                 <AlertTriangle className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="font-extrabold text-base text-[#1D2417] dark:text-stone-100 font-serif">
+                <h3 className="font-extrabold text-base text-[#13200F] font-serif">
                   Neglected Topics Recovery Queue ({neglectedTopics.length})
                 </h3>
-                <p className="text-xs text-stone-500">
+                <p className="text-xs text-[#52604A]">
                   Completed over 14 days ago without a single review. Quick revise here to restore memory traces.
                 </p>
               </div>
             </div>
             <button
               onClick={() => setActiveTab('revision')}
-              className="text-xs font-bold text-[#486B2C] hover:underline"
+              className="text-xs font-bold text-[#385522] hover:underline cursor-pointer"
             >
               Go to Full Queue →
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 pt-1">
             {neglectedTopics.slice(0, 6).map(item => (
               <div
                 key={item.topic.id}
-                className="p-3.5 rounded-xl bg-[#FAF7F2] dark:bg-stone-950/60 border border-[#EDE4D0] dark:border-stone-800 flex flex-col justify-between gap-2"
+                className="p-4 rounded-2xl bg-white border border-[#D5E2CD] flex flex-col justify-between gap-3 shadow-xs hover:border-[#486B2C] transition-colors"
               >
                 <div>
-                  <div className="flex items-center justify-between gap-1 mb-1">
-                    <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#F8F5EB] border border-[#EDE4D0]">
+                  <div className="flex items-center justify-between gap-1 mb-1.5">
+                    <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-lg bg-[#EAF2E4] text-[#385522] border border-[#CFE1C5]">
                       {item.subjectCode}
                     </span>
-                    <span className="text-[10px] text-stone-400 capitalize">{item.topic.priority}</span>
+                    <span className="text-[10px] text-[#707E68] font-semibold capitalize">{item.topic.priority}</span>
                   </div>
-                  <div className="font-bold text-xs text-stone-900 dark:text-stone-100">
+                  <div className="font-bold text-xs text-[#13200F]">
                     {item.topic.name}
                   </div>
-                  <div className="text-[11px] text-stone-500 truncate">
+                  <div className="text-[11px] text-[#63725B] truncate mt-0.5">
                     {item.chapterName}
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-[#EDE4D0]/60 dark:border-stone-800 flex items-center justify-between text-xs">
-                  <span className="text-[10px] text-[#8E5B13] font-semibold">
+                <div className="pt-2.5 border-t border-[#E8EFE3] flex items-center justify-between text-xs">
+                  <span className="text-[10px] text-[#8E5B13] font-bold bg-[#FAF4E4] px-2 py-0.5 rounded-full border border-[#EEDDB8]">
                     0 Spaced Reviews
                   </span>
                   <button
                     onClick={() => handleQuickRevise(item)}
-                    className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#486B2C] hover:bg-[#385522] text-white shadow-xs"
+                    className="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-[#486B2C] hover:bg-[#385522] text-white shadow-xs cursor-pointer transition-colors"
                   >
                     Revise Now
                   </button>
@@ -855,3 +863,5 @@ export const AnalyticsView: React.FC = () => {
     </div>
   );
 };
+
+export default AnalyticsView;
