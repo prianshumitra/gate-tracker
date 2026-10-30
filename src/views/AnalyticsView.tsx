@@ -278,9 +278,9 @@ export const AnalyticsView: React.FC = () => {
                 ({completedTopics}/{totalTopics} topics)
               </span>
             </div>
-            <div className="mt-3 w-full h-2 bg-[#E2ECD9]/70 rounded-full overflow-hidden p-0.5">
+            <div className="mt-3 w-full h-2.5 bg-[#C5BEAF] border border-[#B5ACA0]/40 rounded-full overflow-hidden p-0.5">
               <div
-                className="h-full bg-[#486B2C] rounded-full transition-all duration-700"
+                className="h-full bg-[#385820] rounded-full transition-all duration-700 shadow-xs"
                 style={{ width: `${syllabusPct}%` }}
               />
             </div>
@@ -308,9 +308,9 @@ export const AnalyticsView: React.FC = () => {
                 Active Habit Score
               </span>
             </div>
-            <div className="mt-3 w-full h-2 bg-[#E2ECD9]/70 rounded-full overflow-hidden p-0.5">
+            <div className="mt-3 w-full h-2.5 bg-[#C5BEAF] border border-[#B5ACA0]/40 rounded-full overflow-hidden p-0.5">
               <div
-                className="h-full bg-[#385522] rounded-full transition-all duration-700"
+                className="h-full bg-[#385820] rounded-full transition-all duration-700 shadow-xs"
                 style={{ width: `${consistencyPct}%` }}
               />
             </div>
@@ -338,9 +338,9 @@ export const AnalyticsView: React.FC = () => {
                 Reinforced (2+ Rev)
               </span>
             </div>
-            <div className="mt-3 w-full h-2 bg-[#F3EAD3]/70 rounded-full overflow-hidden p-0.5">
+            <div className="mt-3 w-full h-2.5 bg-[#C5BEAF] border border-[#B5ACA0]/40 rounded-full overflow-hidden p-0.5">
               <div
-                className="h-full bg-[#C68A2C] rounded-full transition-all duration-700"
+                className="h-full bg-[#C68A2C] rounded-full transition-all duration-700 shadow-xs"
                 style={{ width: `${retentionScore}%` }}
               />
             </div>
@@ -598,10 +598,10 @@ export const AnalyticsView: React.FC = () => {
                             {s.completed} of {s.total}
                           </span>
                         </div>
-                        <div className="w-full h-2 bg-[#E2ECD9]/70 rounded-full overflow-hidden flex p-0.5">
+                        <div className="w-full h-2.5 bg-[#C5BEAF] border border-[#B5ACA0]/40 rounded-full overflow-hidden flex p-0.5">
                           {/* Reinforced portion */}
                           <div
-                            className="h-full bg-[#486B2C] rounded-full"
+                            className="h-full bg-[#385820] rounded-full"
                             style={{
                               width: `${s.total > 0 ? (s.reinforced / s.total) * 100 : 0}%`
                             }}
@@ -696,10 +696,10 @@ export const AnalyticsView: React.FC = () => {
                     <span className={`text-[11px] font-bold ${isPeak ? 'text-[#385522]' : 'text-[#63725B]'}`}>
                       {count}
                     </span>
-                    <div className="w-full bg-[#E2ECD9]/40 rounded-t-xl h-36 flex items-end justify-center p-1 border border-b-0 border-[#D5E2CD]">
+                    <div className="w-full bg-[#C5BEAF]/40 rounded-t-xl h-36 flex items-end justify-center p-1 border border-b-0 border-[#B5ACA0]">
                       <div
                         className={`w-full rounded-t-lg transition-all duration-500 ${
-                          isPeak ? 'bg-[#385522] shadow-sm' : 'bg-[#A3CD8B] hover:bg-[#679B45]'
+                          isPeak ? 'bg-[#385820] shadow-sm' : 'bg-[#5FA049] hover:bg-[#487E37]'
                         }`}
                         style={{ height: `${heightPct}%` }}
                       />

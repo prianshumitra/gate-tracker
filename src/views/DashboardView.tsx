@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { getLocalDateString } from '../utils/date';
 import {
@@ -47,6 +47,67 @@ export const DashboardView: React.FC = () => {
   const criticalPendingCount = flatTopics.filter(
     t => t.topic.status !== 'completed' && (t.topic.priority === 'critical' || t.topic.priority === 'high')
   ).length;
+
+  // Map all activity logs & completed topics by date for heatmap & calendar
+  const activitiesCountByDate = useMemo(() => {
+    const counts: Record<string, number> = {};
+    activityLogs.forEach(l => {
+      const d = (l.date || l.timestamp || '').slice(0, 10);
+      if (d) counts[d] = (counts[d] || 0) + 1;
+    });
+    flatTopics.forEach(item => {
+      if (item.topic.status === 'completed') {
+        const d = (item.topic.completedAt || item.topic.lastRevisedAt || todayStr).slice(0, 10);
+        if (d) counts[d] = (counts[d] || 0) + 1;
+      }
+    });
+    return counts;
+  }, [activityLogs, flatTopics, todayStr]);
+
+  // 20-week Heatmap grid (20 columns x 7 days)
+  const heatmapCells = useMemo(() => {
+    const cells: { dateStr: string; level: number; isFuture: boolean }[] = [];
+    const today = new Date();
+    const dayOfWeek = (today.getDay() + 6) % 7; // 0=Mon, 6=Sun
+
+    for (let row = 0; row < 7; row++) {
+      for (let col = 0; col < 20; col++) {
+        const daysOffset = (col - 19) * 7 + (row - dayOfWeek);
+        const targetDate = new Date();
+        targetDate.setDate(today.getDate() + daysOffset);
+        const dateStr = targetDate.toISOString().slice(0, 10);
+        const isFuture = daysOffset > 0;
+        const count = isFuture ? 0 : (activitiesCountByDate[dateStr] || 0);
+
+        let level = 0;
+        if (count >= 4) level = 4;
+        else if (count === 3) level = 3;
+        else if (count === 2) level = 2;
+        else if (count >= 1) level = 1;
+        else if (dateStr === todayStr && streakStats.currentStreak > 0) level = 2;
+
+        cells.push({ dateStr, level, isFuture });
+      }
+    }
+    return cells;
+  }, [activitiesCountByDate, todayStr, streakStats]);
+
+  const getHeatmapColor = (level: number, isFuture: boolean) => {
+    if (isFuture) return 'bg-[#DDD7C9]/40 border border-[#C5BEAF]/40';
+    switch (level) {
+      case 1:
+        return 'bg-[#96BE88] border border-[#7EA86F] shadow-2xs';
+      case 2:
+        return 'bg-[#5FA049] border border-[#488534] shadow-2xs';
+      case 3:
+        return 'bg-[#3E7628] border border-[#2D5A1C] shadow-2xs';
+      case 4:
+        return 'bg-[#225014] border border-[#14360A] shadow-2xs';
+      case 0:
+      default:
+        return 'bg-[#C8C2B3] border border-[#B5AEA0] hover:border-[#8E8676]';
+    }
+  };
 
 
 
@@ -285,22 +346,24 @@ export const DashboardView: React.FC = () => {
               <div className="relative w-14 h-14 shrink-0 flex items-center justify-center">
                 <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
                   <path
-                    className="text-[#ECE4D2]"
-                    strokeWidth="4"
-                    stroke="currentColor"
+                    stroke="#C0B9AA"
+                    strokeWidth="4.5"
                     fill="none"
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   />
                   <path
-                    className="text-[#486B2C] transition-all duration-700"
+                    className="transition-all duration-700"
+                    stroke="#385820"
                     strokeDasharray={`${completionRate}, 100`}
-                    strokeWidth="4"
+                    strokeWidth="4.5"
                     strokeLinecap="round"
-                    stroke="currentColor"
                     fill="none"
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   />
                 </svg>
+                <span className="absolute text-[11px] font-extrabold text-[#385820]">
+                  {completionRate}%
+                </span>
               </div>
             </div>
 
@@ -322,15 +385,18 @@ export const DashboardView: React.FC = () => {
               </div>
 
               {/* Ascending mini bars graphic in Crème Ochre */}
-              <div className="flex items-end gap-1 h-9 shrink-0 pr-1">
+              <div className="flex items-end gap-1.5 h-9 shrink-0 pr-1">
                 {[10, 14, 12, 18, 22, 26, 30, 36].map((h, i) => {
                   const hasActivity = streakStats.currentStreak > 0 && i < streakStats.currentStreak;
                   return (
                     <div
                       key={i}
-                      className={`w-1.5 rounded-full transition-all duration-300 ${hasActivity ? 'bg-[#C68A2C]' : 'bg-[#ECE4D2]'
-                        }`}
-                      style={{ height: `${hasActivity ? h : 6}px` }}
+                      className={`w-2 rounded-full transition-all duration-300 ${
+                        hasActivity
+                          ? 'bg-[#C68A2C] shadow-xs'
+                          : 'bg-[#C5BEAF] border border-[#B5ACA0]/50'
+                      }`}
+                      style={{ height: `${hasActivity ? h : Math.max(8, Math.round(h * 0.45))}px` }}
                     />
                   );
                 })}
@@ -355,9 +421,9 @@ export const DashboardView: React.FC = () => {
               </div>
 
               {/* Horizontal Progress Meter in Sap Green */}
-              <div className="w-20 sm:w-24 h-2.5 bg-[#ECE4D2] rounded-full overflow-hidden shrink-0">
+              <div className="w-20 sm:w-28 h-3 bg-[#C5BEAF] border border-[#B5ACA0]/40 rounded-full overflow-hidden shrink-0 p-0.5">
                 <div
-                  className="h-full bg-[#486B2C] rounded-full transition-all duration-500"
+                  className="h-full bg-[#385820] rounded-full transition-all duration-500 shadow-xs"
                   style={{
                     width: `${completedTopics > 0 ? Math.min(100, Math.round((dueTopics.length / completedTopics) * 100)) : 0}%`
                   }}
@@ -421,15 +487,16 @@ export const DashboardView: React.FC = () => {
                     </div>
 
                     {/* Column 2: Progress bar + Percentage */}
-                    <div className="col-span-3 flex items-center gap-1.5 px-0.5">
-                      <div className="flex-1 h-1.5 bg-[#DFDBD1] rounded-full overflow-hidden">
+                    <div className="col-span-3 flex items-center gap-2 px-0.5">
+                      <div className="flex-1 h-2 bg-[#C5BEAF] border border-[#B5ACA0]/40 rounded-full overflow-hidden p-0.5">
                         <div
-                          className={`h-full rounded-full ${isHighCompletion ? 'bg-[#486B2C]' : 'bg-[#C68A2C]'
-                            }`}
+                          className={`h-full rounded-full transition-all duration-500 ${
+                            isHighCompletion ? 'bg-[#385820]' : 'bg-[#C68A2C]'
+                          }`}
                           style={{ width: `${sub.completion}%` }}
                         />
                       </div>
-                      <span className="text-[11px] font-bold text-stone-700 w-7 text-right">
+                      <span className="text-xs font-bold text-stone-800 w-8 text-right font-mono">
                         {sub.completion}%
                       </span>
                     </div>
@@ -612,7 +679,7 @@ export const DashboardView: React.FC = () => {
             {/* Heatmap Grid */}
             <div className="space-y-1.5">
               {/* Month Labels */}
-              <div className="flex justify-between pl-7 text-[10px] text-stone-400 font-medium pr-1">
+              <div className="flex justify-between pl-7 text-[10px] text-stone-600 font-semibold pr-1">
                 <span>Apr</span>
                 <span>May</span>
                 <span>Jun</span>
@@ -622,8 +689,8 @@ export const DashboardView: React.FC = () => {
               </div>
 
               {/* Heatmap Rows (Mon to Sun) */}
-              <div className="flex gap-2 text-[10px] text-stone-400">
-                <div className="flex flex-col justify-between py-0.5 text-right w-5 font-medium leading-none">
+              <div className="flex gap-2 text-[10px] text-stone-600 font-semibold">
+                <div className="flex flex-col justify-between py-0.5 text-right w-5 font-bold leading-none">
                   <span>Mon</span>
                   <span>Tue</span>
                   <span>Wed</span>
@@ -635,35 +702,24 @@ export const DashboardView: React.FC = () => {
 
                 {/* 20 Columns of Week Cells */}
                 <div className="flex-1 grid grid-cols-20 gap-1">
-                  {Array.from({ length: 20 * 7 }).map((_, cIdx) => {
-                    // Start clean in creamy grey #DFDBD1, color if real logs exist
-                    let bg = '#DFDBD1';
-                    if (activityLogs.length > 0) {
-                      const logCount = activityLogs.length;
-                      if (cIdx === 20 * 7 - 1) {
-                        bg = logCount > 3 ? '#3E5C38' : '#8EA685';
-                      }
-                    }
-
-                    return (
-                      <div
-                        key={cIdx}
-                        className="w-2.5 h-2.5 rounded-xs transition-colors"
-                        style={{ backgroundColor: bg }}
-                      />
-                    );
-                  })}
+                  {heatmapCells.map((cell, cIdx) => (
+                    <div
+                      key={cIdx}
+                      title={cell.isFuture ? 'Upcoming day' : `${cell.dateStr}: ${activitiesCountByDate[cell.dateStr] || (cell.dateStr === todayStr && streakStats.currentStreak > 0 ? 1 : 0)} activity`}
+                      className={`w-2.5 h-2.5 rounded-xs transition-colors ${getHeatmapColor(cell.level, cell.isFuture)}`}
+                    />
+                  ))}
                 </div>
               </div>
 
               {/* Less / More Legend */}
-              <div className="flex items-center justify-end gap-1.5 text-[10px] text-stone-400 pt-1 pr-1 font-medium">
+              <div className="flex items-center justify-end gap-1.5 text-[10px] text-stone-600 pt-1.5 pr-1 font-semibold">
                 <span>Less</span>
-                <span className="w-2 h-2 rounded-xs bg-[#DFDBD1]" />
-                <span className="w-2 h-2 rounded-xs bg-[#C4D4BF]" />
-                <span className="w-2 h-2 rounded-xs bg-[#8EA685]" />
-                <span className="w-2 h-2 rounded-xs bg-[#52744B]" />
-                <span className="w-2 h-2 rounded-xs bg-[#3E5C38]" />
+                <span className="w-2.5 h-2.5 rounded-xs bg-[#C8C2B3] border border-[#B5AEA0]" />
+                <span className="w-2.5 h-2.5 rounded-xs bg-[#96BE88] border border-[#7EA86F]" />
+                <span className="w-2.5 h-2.5 rounded-xs bg-[#5FA049] border border-[#488534]" />
+                <span className="w-2.5 h-2.5 rounded-xs bg-[#3E7628] border border-[#2D5A1C]" />
+                <span className="w-2.5 h-2.5 rounded-xs bg-[#225014] border border-[#14360A]" />
                 <span>More</span>
               </div>
             </div>

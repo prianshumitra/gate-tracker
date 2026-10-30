@@ -299,10 +299,9 @@ export const SubjectsView: React.FC = () => {
                   </div>
 
                   {/* Progress bar */}
-                  <div className={`w-full h-1.5 rounded-full overflow-hidden ${isSelected ? 'bg-[#E5D7B7]' : 'bg-[#ECE4D2]'}`}>
+                  <div className={`w-full h-2 rounded-full overflow-hidden border border-[#B5ACA0]/40 p-0.5 ${isSelected ? 'bg-[#DCCBA5]' : 'bg-[#C5BEAF]'}`}>
                     <div
-                      className={`h-full rounded-full transition-all duration-300 ${pct === 100 ? 'bg-[#486B2C]' : 'bg-[#486B2C]'
-                        }`}
+                      className="h-full rounded-full bg-[#385820] transition-all duration-300"
                       style={{ width: `${pct}%` }}
                     />
                   </div>
@@ -346,9 +345,9 @@ export const SubjectsView: React.FC = () => {
               </div>
 
               {/* Progress bar */}
-              <div className="w-full h-2 bg-[#ECE4D2] rounded-full overflow-hidden">
+              <div className="w-full h-3 bg-[#C5BEAF] border border-[#B5ACA0]/40 rounded-full overflow-hidden p-0.5">
                 <div
-                  className="h-full rounded-full bg-[#486B2C] transition-all duration-500"
+                  className="h-full rounded-full bg-[#385820] transition-all duration-500 shadow-xs"
                   style={{ width: `${currentSubjectPct}%` }}
                 />
               </div>
