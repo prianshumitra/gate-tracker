@@ -214,27 +214,27 @@ export const CalendarView: React.FC = () => {
     let base = '';
     switch (level) {
       case 0:
-        base = 'bg-[#C8C2B3] dark:bg-stone-800 border border-[#B5AEA0] dark:border-stone-700 hover:border-[#8E5B13]';
+        base = '!bg-[#C8C2B3] !border-[#B5AEA0] hover:!border-[#8E5B13]';
         break;
       case 1:
-        base = 'bg-[#96BE88] dark:bg-[#3E682E] border border-[#7EA86F] dark:border-[#4E823A] shadow-2xs';
+        base = '!bg-[#96BE88] !border-[#7EA86F]';
         break;
       case 2:
-        base = 'bg-[#5FA049] dark:bg-[#4E823A] border border-[#488534] dark:border-[#63A34B] text-white shadow-2xs';
+        base = '!bg-[#5FA049] !border-[#488534]';
         break;
       case 3:
-        base = 'bg-[#3E7628] dark:bg-[#63A34B] border border-[#2D5A1C] dark:border-[#7CBF5F] text-white shadow-2xs';
+        base = '!bg-[#3E7628] !border-[#2D5A1C]';
         break;
       case 4:
-        base = 'bg-[#225014] dark:bg-[#7CBF5F] border border-[#14360A] dark:border-[#96D678] text-white font-bold shadow-2xs';
+        base = '!bg-[#225014] !border-[#14360A]';
         break;
       default:
-        base = 'bg-[#C8C2B3] dark:bg-stone-800 border border-[#B5AEA0] dark:border-stone-700';
+        base = '!bg-[#C8C2B3] !border-[#B5AEA0]';
         break;
     }
 
     if (isSelected) {
-      return `${base} ring-2 ring-[#C68A2C] scale-125 z-10 shadow-md border-[#C68A2C]`;
+      return `${base} ring-2 ring-[#C68A2C] scale-125 z-10 shadow-md !border-[#C68A2C]`;
     }
     return base;
   };
@@ -275,33 +275,33 @@ export const CalendarView: React.FC = () => {
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
       {/* Executive Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#C5BEAF]/60 dark:border-stone-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#C5BEAF]/60">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-[#EAF2E4] dark:bg-[#486B2C]/20 text-[#2E481B] dark:text-[#EAF2E4] border border-[#C5D9BA] dark:border-[#486B2C]/40 shadow-xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-[#EAF2E4] text-[#2E481B] border border-[#C5D9BA] shadow-xs">
               <span className="w-1.5 h-1.5 rounded-full bg-[#385820] animate-pulse" />
               Real-time Spaced Repetition Engine
             </span>
-            <span className="text-xs text-stone-400">•</span>
-            <span className="text-xs text-stone-600 dark:text-stone-400 font-semibold">GATE Exam Prep Calendar</span>
+            <span className="text-xs text-stone-500">•</span>
+            <span className="text-xs text-stone-700 font-semibold">GATE Exam Prep Calendar</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1D2417] dark:text-stone-100 tracking-tight font-serif flex items-center gap-2.5">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight font-serif flex items-center gap-2.5">
             <CalendarIcon className="w-6 h-6 text-[#385820]" />
             Study Activity & Schedule
           </h2>
-          <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-400 mt-1 max-w-2xl font-medium">
+          <p className="text-xs sm:text-sm text-stone-700 mt-1 max-w-2xl font-medium">
             Track daily revision retention, schedule upcoming spaced review cycles, and monitor your 52-week habit heatmap.
           </p>
         </div>
 
         {/* View Switcher Tabs - macOS Frosted Dock */}
-        <div className="flex items-center gap-1.5 p-1 bg-[#DFDBD1]/80 dark:bg-stone-900/80 backdrop-blur-md rounded-2xl border border-[#C5BEAF] dark:border-[#384830] text-xs font-semibold self-start md:self-auto shadow-xs">
+        <div className="flex items-center gap-1.5 p-1 bg-[#DFDBD1]/80  backdrop-blur-md rounded-2xl border border-[#C5BEAF] text-xs font-semibold self-start md:self-auto shadow-xs">
           <button
             onClick={() => setViewMode('month')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${
               viewMode === 'month'
                 ? 'bg-[#F6E3A1] text-[#1D2417] border border-[#d9c788] shadow-xs font-bold'
-                : 'text-[#4A5543] dark:text-stone-400 hover:text-[#13200F] dark:hover:text-stone-100 hover:bg-white/40 dark:hover:bg-white/10'
+                : 'text-[#4A5543]  hover:text-[#13200F]  hover:bg-white/40 '
             }`}
           >
             <CalendarDays className="w-3.5 h-3.5" />
@@ -312,7 +312,7 @@ export const CalendarView: React.FC = () => {
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${
               viewMode === 'heatmap'
                 ? 'bg-[#F6E3A1] text-[#1D2417] border border-[#d9c788] shadow-xs font-bold'
-                : 'text-[#4A5543] dark:text-stone-400 hover:text-[#13200F] dark:hover:text-stone-100 hover:bg-white/40 dark:hover:bg-white/10'
+                : 'text-[#4A5543]  hover:text-[#13200F]  hover:bg-white/40 '
             }`}
           >
             <Activity className="w-3.5 h-3.5" />
@@ -323,7 +323,7 @@ export const CalendarView: React.FC = () => {
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${
               viewMode === 'agenda'
                 ? 'bg-[#F6E3A1] text-[#1D2417] border border-[#d9c788] shadow-xs font-bold'
-                : 'text-[#4A5543] dark:text-stone-400 hover:text-[#13200F] dark:hover:text-stone-100 hover:bg-white/40 dark:hover:bg-white/10'
+                : 'text-[#4A5543]  hover:text-[#13200F]  hover:bg-white/40 '
             }`}
           >
             <Clock className="w-3.5 h-3.5" />
@@ -337,19 +337,19 @@ export const CalendarView: React.FC = () => {
         {/* Streak Card */}
         <div className="p-4 rounded-2xl bg-[#EBE8E1]/92 backdrop-blur-xl border border-[#C5BEAF] shadow-[0_12px_32px_-4px_rgba(20,30,15,0.12),0_4px_14px_-2px_rgba(20,30,15,0.06)] flex flex-col justify-between">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-stone-600 dark:text-stone-400 uppercase tracking-wider">Current Streak</span>
-            <div className="p-1.5 rounded-xl bg-[#FBF3DC] dark:bg-[#C68A2C]/20 border border-[#d9c788] dark:border-[#C68A2C]/30 text-[#8E5B13] dark:text-[#EEDDB8] shadow-2xs">
+            <span className="text-xs font-bold text-stone-600  uppercase tracking-wider">Current Streak</span>
+            <div className="p-1.5 rounded-xl bg-[#FBF3DC] border border-[#d9c788] text-[#8E5B13] shadow-2xs">
               <Flame className="w-4 h-4 fill-[#C68A2C] text-[#C68A2C] animate-pulse" />
             </div>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-[#1D2417] dark:text-stone-100 font-serif">
+            <span className="text-3xl font-extrabold text-[#1D2417]  font-serif">
               {streakStats.currentStreak}
             </span>
-            <span className="text-xs font-semibold text-stone-600 dark:text-stone-400">Consecutive Days</span>
+            <span className="text-xs font-semibold text-stone-600 ">Consecutive Days</span>
           </div>
-          <div className="mt-3 pt-2.5 border-t border-[#C5BEAF]/60 dark:border-stone-800 flex items-center justify-between text-[11px]">
-            <span className="text-stone-600 dark:text-stone-400">Record: <strong className="text-stone-800 dark:text-stone-200">{streakStats.longestStreak} days</strong></span>
+          <div className="mt-3 pt-2.5 border-t border-[#C5BEAF]/60  flex items-center justify-between text-[11px]">
+            <span className="text-stone-600 ">Record: <strong className="text-stone-800 ">{streakStats.longestStreak} days</strong></span>
             <span className={`font-bold px-2 py-0.5 rounded-md text-[11px] ${
               streakStats.isActiveToday
                 ? 'bg-[#EAF2E4] text-[#2E481B] border border-[#C5D9BA]'
@@ -363,24 +363,24 @@ export const CalendarView: React.FC = () => {
         {/* Milestone Tracker Card */}
         <div className="p-4 rounded-2xl bg-[#EBE8E1]/92 backdrop-blur-xl border border-[#C5BEAF] shadow-[0_12px_32px_-4px_rgba(20,30,15,0.12),0_4px_14px_-2px_rgba(20,30,15,0.06)] flex flex-col justify-between">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-stone-600 dark:text-stone-400 uppercase tracking-wider">Next Milestone</span>
-            <div className="p-1.5 rounded-xl bg-[#EAF2E4] dark:bg-[#486B2C]/20 border border-[#C5D9BA] dark:border-[#486B2C]/30 text-[#385820] shadow-2xs">
+            <span className="text-xs font-bold text-stone-600  uppercase tracking-wider">Next Milestone</span>
+            <div className="p-1.5 rounded-xl bg-[#EAF2E4] border border-[#C5D9BA] text-[#385820] shadow-2xs">
               <Award className="w-4 h-4" />
             </div>
           </div>
           <div>
-            <div className="flex items-center gap-1.5 font-bold text-base text-[#1D2417] dark:text-stone-100 truncate">
+            <div className="flex items-center gap-1.5 font-bold text-base text-[#1D2417]  truncate">
               <span>{nextMilestone?.badge || '🏆'}</span>
               <span>{nextMilestone?.title || 'All Milestones Achieved!'}</span>
             </div>
-            <div className="text-xs text-stone-600 dark:text-stone-400 mt-0.5">
+            <div className="text-xs text-stone-600  mt-0.5">
               {nextMilestone
                 ? `${Math.max(0, nextMilestone.days - streakStats.currentStreak)} days remaining to reach ${nextMilestone.days}d`
                 : 'Peak habit consistency unlocked!'}
             </div>
           </div>
-          <div className="mt-3 pt-2.5 border-t border-[#C5BEAF]/60 dark:border-stone-800">
-            <div className="w-full h-2 bg-[#C8C2B3] dark:bg-stone-800 rounded-full overflow-hidden p-0.5 border border-[#B5AEA0]/40">
+          <div className="mt-3 pt-2.5 border-t border-[#C5BEAF]/60 ">
+            <div className="w-full h-2 bg-[#C8C2B3]  rounded-full overflow-hidden p-0.5 border border-[#B5AEA0]/40">
               <div
                 className="h-full bg-[#385820] rounded-full transition-all duration-700 shadow-2xs"
                 style={{ width: `${milestoneProgressPct}%` }}
@@ -392,33 +392,33 @@ export const CalendarView: React.FC = () => {
         {/* Monthly Activity Card */}
         <div className="p-4 rounded-2xl bg-[#EBE8E1]/92 backdrop-blur-xl border border-[#C5BEAF] shadow-[0_12px_32px_-4px_rgba(20,30,15,0.12),0_4px_14px_-2px_rgba(20,30,15,0.06)] flex flex-col justify-between">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-stone-600 dark:text-stone-400 uppercase tracking-wider">
+            <span className="text-xs font-bold text-stone-600  uppercase tracking-wider">
               {currentCalendarDate.toLocaleDateString('en-US', { month: 'short' })} Activity
             </span>
-            <div className="p-1.5 rounded-xl bg-[#DFDBD1]/80 dark:bg-stone-800 border border-[#C5BEAF] dark:border-stone-700 text-[#385820] shadow-2xs">
+            <div className="p-1.5 rounded-xl bg-[#DFDBD1]/80  border border-[#C5BEAF]  text-[#385820] shadow-2xs">
               <Zap className="w-4 h-4" />
             </div>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-[#1D2417] dark:text-stone-100 font-serif">
+            <span className="text-3xl font-extrabold text-[#1D2417]  font-serif">
               {monthlyLogs.length}
             </span>
-            <span className="text-xs font-semibold text-stone-600 dark:text-stone-400">Actions Logged</span>
+            <span className="text-xs font-semibold text-stone-600 ">Actions Logged</span>
           </div>
-          <div className="mt-3 pt-2.5 border-t border-[#C5BEAF]/60 dark:border-stone-800 flex items-center justify-between text-[11px] text-stone-600 dark:text-stone-400">
+          <div className="mt-3 pt-2.5 border-t border-[#C5BEAF]/60  flex items-center justify-between text-[11px] text-stone-600 ">
             <span>{monthlyCompleted} Completed</span>
             <span>•</span>
             <span>{monthlyRevised} Revisions</span>
             <span>•</span>
-            <span className="font-bold text-stone-800 dark:text-stone-200">{monthlyActiveDays} Active Days</span>
+            <span className="font-bold text-stone-800 ">{monthlyActiveDays} Active Days</span>
           </div>
         </div>
 
         {/* Consistency Score Card */}
         <div className="p-4 rounded-2xl bg-[#EBE8E1]/92 backdrop-blur-xl border border-[#C5BEAF] shadow-[0_12px_32px_-4px_rgba(20,30,15,0.12),0_4px_14px_-2px_rgba(20,30,15,0.06)] flex flex-col justify-between">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-stone-600 dark:text-stone-400 uppercase tracking-wider">Weekly Consistency</span>
-            <div className="p-1.5 rounded-xl bg-[#FBF3DC] dark:bg-stone-800 border border-[#d9c788] dark:border-stone-700 text-[#8E5B13] shadow-2xs">
+            <span className="text-xs font-bold text-stone-600  uppercase tracking-wider">Weekly Consistency</span>
+            <div className="p-1.5 rounded-xl bg-[#FBF3DC]  border border-[#d9c788]  text-[#8E5B13] shadow-2xs">
               <Target className="w-4 h-4" />
             </div>
           </div>
@@ -426,10 +426,10 @@ export const CalendarView: React.FC = () => {
             <span className="text-3xl font-extrabold text-[#385820] font-serif">
               {streakStats.weeklyConsistencyPct}%
             </span>
-            <span className="text-xs font-semibold text-stone-600 dark:text-stone-400">Pace Health</span>
+            <span className="text-xs font-semibold text-stone-600 ">Pace Health</span>
           </div>
-          <div className="mt-3 pt-2.5 border-t border-[#C5BEAF]/60 dark:border-stone-800 flex items-center justify-between text-[11px]">
-            <span className="text-stone-600 dark:text-stone-400">
+          <div className="mt-3 pt-2.5 border-t border-[#C5BEAF]/60  flex items-center justify-between text-[11px]">
+            <span className="text-stone-600 ">
               {streakStats.activeDaysThisWeek} of 7 days active
             </span>
             <span className="font-bold text-[#385820]">
@@ -446,7 +446,7 @@ export const CalendarView: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-extrabold text-base text-[#1D2417] dark:text-stone-100 font-serif">
+              <h3 className="font-extrabold text-base text-[#1D2417]  font-serif">
                 52-Week Study Contribution Matrix
               </h3>
               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#EAF2E4] text-[#2E481B] border border-[#C5D9BA] shadow-2xs">
@@ -462,13 +462,13 @@ export const CalendarView: React.FC = () => {
                 </button>
               )}
             </div>
-            <p className="text-xs text-stone-600 dark:text-stone-400 mt-0.5 font-medium">
+            <p className="text-xs text-stone-600  mt-0.5 font-medium">
               Visual record of all topic completions and spaced repetition reviews across the last 365 days.
             </p>
           </div>
 
           {/* Scale Legend */}
-          <div className="flex items-center gap-2 text-xs text-stone-600 dark:text-stone-400 font-semibold">
+          <div className="flex items-center gap-2 text-xs text-stone-600  font-semibold">
             <span>Less</span>
             <div className="flex items-center gap-1.5">
               <div className="w-3.5 h-3.5 rounded-xs bg-[#C8C2B3] border border-[#B5AEA0]" title="0 activities" />
@@ -485,7 +485,7 @@ export const CalendarView: React.FC = () => {
         <div className="overflow-x-auto pb-3 pt-1">
           <div className="inline-flex flex-col gap-1.5 min-w-[980px]">
             {/* Month labels row */}
-            <div className="relative h-4 text-[10px] font-bold text-stone-600 dark:text-stone-400 select-none ml-7">
+            <div className="relative h-4 text-[10px] font-bold text-stone-600  select-none ml-7">
               {monthLabels.map((m, idx) => (
                 <span
                   key={`${m.label}-${idx}`}
@@ -536,10 +536,10 @@ export const CalendarView: React.FC = () => {
         </div>
 
         {/* Heatmap Info Footer Bar */}
-        <div className="pt-3 border-t border-[#C5BEAF]/60 dark:border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-stone-600 dark:text-stone-400">
+        <div className="pt-3 border-t border-[#C5BEAF]/60  flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-stone-600 ">
           <div>
             {hoveredDay ? (
-              <span className="text-[#1D2417] dark:text-stone-200 font-semibold flex items-center gap-2">
+              <span className="text-[#1D2417]  font-semibold flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#385820]" />
                 <strong>{formatHumanDate(hoveredDay.date)}:</strong>{' '}
                 {hoveredDay.count > 0
@@ -553,8 +553,8 @@ export const CalendarView: React.FC = () => {
             )}
           </div>
 
-          <div className="text-[11px] text-stone-600 dark:text-stone-400">
-            Selected: <strong className="text-[#1D2417] dark:text-stone-100 font-serif">{formatHumanDate(selectedDate)}</strong>
+          <div className="text-[11px] text-stone-600 ">
+            Selected: <strong className="text-[#1D2417]  font-serif">{formatHumanDate(selectedDate)}</strong>
           </div>
         </div>
       </div>
@@ -563,12 +563,12 @@ export const CalendarView: React.FC = () => {
       {viewMode === 'agenda' ? (
         /* Agenda View: Next 14 Days */
         <div className="p-6 rounded-2xl bg-[#EBE8E1]/92 backdrop-blur-xl border border-[#C5BEAF] shadow-[0_12px_32px_-4px_rgba(20,30,15,0.12),0_4px_14px_-2px_rgba(20,30,15,0.06)] space-y-6">
-          <div className="flex items-center justify-between pb-3 border-b border-[#C5BEAF]/60 dark:border-stone-800">
+          <div className="flex items-center justify-between pb-3 border-b border-[#C5BEAF]/60 ">
             <div>
-              <h3 className="font-extrabold text-lg text-[#1D2417] dark:text-stone-100 font-serif">
+              <h3 className="font-extrabold text-lg text-[#1D2417]  font-serif">
                 14-Day Forward Revision Radar
               </h3>
-              <p className="text-xs text-stone-600 dark:text-stone-400 font-medium">
+              <p className="text-xs text-stone-600  font-medium">
                 Upcoming spaced repetition workload and topic schedules
               </p>
             </div>
@@ -591,13 +591,13 @@ export const CalendarView: React.FC = () => {
                   key={dateStr}
                   className={`p-4 rounded-xl border transition-all shadow-xs ${
                     isTodayDate
-                      ? 'bg-[#FBF3DC] dark:bg-[#C68A2C]/10 border-2 border-[#C68A2C]'
-                      : 'bg-[#DFDBD1]/60 dark:bg-stone-950/60 border border-[#C5BEAF] dark:border-stone-800'
+                      ? 'bg-[#FBF3DC] border-2 border-[#C68A2C]'
+                      : 'bg-[#DFDBD1]/60  border border-[#C5BEAF] '
                   }`}
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2.5">
-                      <span className="font-serif font-extrabold text-sm text-[#1D2417] dark:text-stone-100">
+                      <span className="font-serif font-extrabold text-sm text-[#1D2417] ">
                         {formatHumanDate(dateStr)}
                       </span>
                       {isTodayDate && (
@@ -605,13 +605,13 @@ export const CalendarView: React.FC = () => {
                           TODAY
                         </span>
                       )}
-                      <span className="text-xs text-stone-600 dark:text-stone-400 font-medium">
+                      <span className="text-xs text-stone-600  font-medium">
                         ({formatRelativeDate(dateStr)})
                       </span>
                     </div>
 
                     <div className="flex items-center gap-2 text-xs">
-                      <span className="text-stone-600 dark:text-stone-400 font-medium">
+                      <span className="text-stone-600  font-medium">
                         {scheduled.length} Due • {logs.length} Logged
                       </span>
                       <button
@@ -619,7 +619,7 @@ export const CalendarView: React.FC = () => {
                           setSelectedDate(dateStr);
                           setViewMode('month');
                         }}
-                        className="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-[#EBE8E1] hover:bg-[#DFDBD1] border border-[#C5BEAF] text-[#1D2417] dark:text-stone-200 transition-colors shadow-2xs"
+                        className="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-[#EBE8E1] hover:bg-[#DFDBD1] border border-[#C5BEAF] text-[#1D2417]  transition-colors shadow-2xs"
                       >
                         Inspect
                       </button>
@@ -633,13 +633,13 @@ export const CalendarView: React.FC = () => {
                       {scheduled.map(item => (
                         <div
                           key={item.topic.id}
-                          className="p-3 rounded-xl bg-[#EBE8E1]/90 dark:bg-stone-900 border border-[#C5BEAF] dark:border-stone-800 flex items-center justify-between text-xs shadow-2xs"
+                          className="p-3 rounded-xl bg-[#EBE8E1]/90  border border-[#C5BEAF]  flex items-center justify-between text-xs shadow-2xs"
                         >
                           <div className="min-w-0 pr-2">
-                            <div className="font-bold text-stone-900 dark:text-stone-100 truncate">
+                            <div className="font-bold text-stone-900  truncate">
                               {item.topic.name}
                             </div>
-                            <div className="text-[11px] text-stone-600 dark:text-stone-400 truncate">
+                            <div className="text-[11px] text-stone-600  truncate">
                               {item.subjectCode} • {item.chapterName} • Rev #{item.topic.revisionCount + 1}
                             </div>
                           </div>
@@ -664,9 +664,9 @@ export const CalendarView: React.FC = () => {
           {/* Left Column: Calendar View (7 cols) */}
           <div className="lg:col-span-7 p-6 rounded-2xl bg-[#EBE8E1]/92 backdrop-blur-xl border border-[#C5BEAF] shadow-[0_12px_32px_-4px_rgba(20,30,15,0.12),0_4px_14px_-2px_rgba(20,30,15,0.06)] space-y-4">
             {/* Calendar Month Header Controls */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#C5BEAF]/60 dark:border-stone-800">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#C5BEAF]/60 ">
               <div className="flex items-center gap-3">
-                <h3 className="font-extrabold text-xl text-[#1D2417] dark:text-stone-100 font-serif">
+                <h3 className="font-extrabold text-xl text-[#1D2417]  font-serif">
                   {currentCalendarDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                 </h3>
                 <button
@@ -679,13 +679,13 @@ export const CalendarView: React.FC = () => {
 
               {/* Month Navigation & Filter */}
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1 bg-[#DFDBD1]/80 dark:bg-stone-800/80 p-0.5 rounded-xl border border-[#C5BEAF] dark:border-stone-700">
+                <div className="flex items-center gap-1 bg-[#DFDBD1]/80  p-0.5 rounded-xl border border-[#C5BEAF] ">
                   <button
                     onClick={() => setCalendarFilter('all')}
                     className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
                       calendarFilter === 'all'
                         ? 'bg-[#385820] text-white shadow-xs font-bold'
-                        : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                        : 'text-stone-600  hover:text-stone-900'
                     }`}
                   >
                     All
@@ -695,7 +695,7 @@ export const CalendarView: React.FC = () => {
                     className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
                       calendarFilter === 'due'
                         ? 'bg-[#C68A2C] text-white shadow-xs font-bold'
-                        : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                        : 'text-stone-600  hover:text-stone-900'
                     }`}
                   >
                     Due
@@ -705,7 +705,7 @@ export const CalendarView: React.FC = () => {
                     className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
                       calendarFilter === 'completed'
                         ? 'bg-[#385820] text-white shadow-xs font-bold'
-                        : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                        : 'text-stone-600  hover:text-stone-900'
                     }`}
                   >
                     Done
@@ -715,14 +715,14 @@ export const CalendarView: React.FC = () => {
                 <div className="flex items-center gap-1">
                   <button
                     onClick={prevMonth}
-                    className="p-1.5 rounded-lg bg-[#DFDBD1]/80 dark:bg-stone-800 text-[#1D2417] dark:text-stone-300 hover:bg-[#C8C2B3] border border-[#C5BEAF] dark:border-stone-700 transition-colors shadow-2xs"
+                    className="p-1.5 rounded-lg bg-[#DFDBD1]/80  text-[#1D2417]  hover:bg-[#C8C2B3] border border-[#C5BEAF]  transition-colors shadow-2xs"
                     title="Previous Month"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
                   <button
                     onClick={nextMonth}
-                    className="p-1.5 rounded-lg bg-[#DFDBD1]/80 dark:bg-stone-800 text-[#1D2417] dark:text-stone-300 hover:bg-[#C8C2B3] border border-[#C5BEAF] dark:border-stone-700 transition-colors shadow-2xs"
+                    className="p-1.5 rounded-lg bg-[#DFDBD1]/80  text-[#1D2417]  hover:bg-[#C8C2B3] border border-[#C5BEAF]  transition-colors shadow-2xs"
                     title="Next Month"
                   >
                     <ChevronRight className="w-4 h-4" />
@@ -732,7 +732,7 @@ export const CalendarView: React.FC = () => {
             </div>
 
             {/* Calendar Grid Days of Week */}
-            <div className="grid grid-cols-7 gap-1 text-center text-xs font-bold text-stone-600 dark:text-stone-400 uppercase tracking-wider py-1 select-none">
+            <div className="grid grid-cols-7 gap-1 text-center text-xs font-bold text-stone-600  uppercase tracking-wider py-1 select-none">
               <span className="text-[#8E5B13]">Sun</span>
               <span>Mon</span>
               <span>Tue</span>
@@ -748,7 +748,7 @@ export const CalendarView: React.FC = () => {
               {Array.from({ length: startingDayOfWeek }).map((_, i) => (
                 <div
                   key={`blank-${i}`}
-                  className="h-20 rounded-xl bg-[#DFDBD1]/30 dark:bg-stone-950/20 border border-dashed border-[#C5BEAF]/40"
+                  className="h-20 rounded-xl bg-[#DFDBD1]/30  border border-dashed border-[#C5BEAF]/40"
                 />
               ))}
 
@@ -779,8 +779,8 @@ export const CalendarView: React.FC = () => {
                       isSelected
                         ? 'bg-[#385820] text-white border-2 border-[#263D15] shadow-md ring-2 ring-[#385820]/30'
                         : isTodayDate
-                        ? 'bg-[#FBF3DC] dark:bg-[#C68A2C]/20 border-2 border-[#C68A2C] text-[#8E5B13] dark:text-[#EEDDB8] font-bold ring-1 ring-[#C68A2C]/40'
-                        : 'bg-[#DFDBD1]/50 dark:bg-stone-950/60 border border-[#C5BEAF] dark:border-stone-800/80 hover:bg-[#DFDBD1]/90 hover:border-[#8E8676] text-stone-800 dark:text-stone-300'
+                        ? 'bg-[#FBF3DC] border-2 border-[#C68A2C] text-[#8E5B13] font-bold ring-1 ring-[#C68A2C]/40'
+                        : 'bg-[#DFDBD1]/50  border border-[#C5BEAF]  hover:bg-[#DFDBD1]/90 hover:border-[#8E8676] text-stone-800 '
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -789,7 +789,7 @@ export const CalendarView: React.FC = () => {
                           isSelected
                             ? 'text-white font-extrabold'
                             : isTodayDate
-                            ? 'text-[#8E5B13] dark:text-[#EEDDB8] font-black'
+                            ? 'text-[#8E5B13] font-black'
                             : ''
                         }`}
                       >
@@ -850,7 +850,7 @@ export const CalendarView: React.FC = () => {
             </div>
 
             {/* Quick Helper Legend */}
-            <div className="pt-2 flex flex-wrap items-center justify-between gap-2 text-[11px] text-stone-600 dark:text-stone-400 font-medium">
+            <div className="pt-2 flex flex-wrap items-center justify-between gap-2 text-[11px] text-stone-600  font-medium">
               <div className="flex items-center gap-3">
                 <span className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-[#385820]" /> Done
@@ -869,15 +869,15 @@ export const CalendarView: React.FC = () => {
           {/* Right Column: Day Inspector Panel (5 cols) */}
           <div className="lg:col-span-5 p-6 rounded-2xl bg-[#EBE8E1]/92 backdrop-blur-xl border border-[#C5BEAF] shadow-[0_12px_32px_-4px_rgba(20,30,15,0.12),0_4px_14px_-2px_rgba(20,30,15,0.06)] space-y-6">
             {/* Inspector Header */}
-            <div className="pb-3 border-b border-[#C5BEAF]/60 dark:border-stone-800 flex items-center justify-between">
+            <div className="pb-3 border-b border-[#C5BEAF]/60  flex items-center justify-between">
               <div>
-                <span className="text-[11px] uppercase font-bold tracking-wider text-stone-500 dark:text-stone-400">
+                <span className="text-[11px] uppercase font-bold tracking-wider text-stone-500 ">
                   Day Inspector
                 </span>
-                <h3 className="text-xl font-extrabold text-[#1D2417] dark:text-stone-100 font-serif mt-0.5">
+                <h3 className="text-xl font-extrabold text-[#1D2417]  font-serif mt-0.5">
                   {formatHumanDate(selectedDate)}
                 </h3>
-                <div className="text-xs text-stone-600 dark:text-stone-400 mt-0.5 font-medium">
+                <div className="text-xs text-stone-600  mt-0.5 font-medium">
                   {formatRelativeDate(selectedDate)}
                 </div>
               </div>
@@ -900,7 +900,7 @@ export const CalendarView: React.FC = () => {
             {/* Scheduled Revisions for this date */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="text-xs font-bold text-stone-800 dark:text-stone-200 uppercase tracking-wider flex items-center gap-1.5">
+                <h4 className="text-xs font-bold text-stone-800  uppercase tracking-wider flex items-center gap-1.5">
                   <Clock className="w-4 h-4 text-[#C68A2C]" />
                   Revisions Scheduled ({selectedDateScheduled.length})
                 </h4>
@@ -912,7 +912,7 @@ export const CalendarView: React.FC = () => {
               </div>
 
               {selectedDateScheduled.length === 0 ? (
-                <div className="p-4 rounded-xl bg-[#DFDBD1]/50 dark:bg-stone-950/40 border border-[#C5BEAF] dark:border-stone-800/80 text-center text-xs text-stone-600 dark:text-stone-400 font-medium">
+                <div className="p-4 rounded-xl bg-[#DFDBD1]/50  border border-[#C5BEAF]  text-center text-xs text-stone-600  font-medium">
                   No spaced revisions scheduled on this date.
                 </div>
               ) : (
@@ -920,14 +920,14 @@ export const CalendarView: React.FC = () => {
                   {selectedDateScheduled.map((item: FlatTopicWithSubject) => (
                     <div
                       key={item.topic.id}
-                      className="p-3 rounded-xl bg-[#DFDBD1]/70 dark:bg-stone-950/60 border border-[#C5BEAF] dark:border-stone-800 flex flex-col gap-2 transition-all hover:border-[#8E8676] shadow-2xs"
+                      className="p-3 rounded-xl bg-[#DFDBD1]/70  border border-[#C5BEAF]  flex flex-col gap-2 transition-all hover:border-[#8E8676] shadow-2xs"
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <div className="font-bold text-xs text-stone-900 dark:text-stone-100">
+                          <div className="font-bold text-xs text-stone-900 ">
                             {item.topic.name}
                           </div>
-                          <div className="text-[11px] text-stone-600 dark:text-stone-400">
+                          <div className="text-[11px] text-stone-600 ">
                             {item.subjectCode} • {item.chapterName}
                           </div>
                         </div>
@@ -937,14 +937,14 @@ export const CalendarView: React.FC = () => {
                       </div>
 
                       {/* Action buttons */}
-                      <div className="flex items-center justify-between pt-1 border-t border-[#C5BEAF]/50 dark:border-stone-800/60 text-xs">
-                        <span className="text-[10px] text-stone-600 dark:text-stone-400">
-                          Priority: <strong className="capitalize text-stone-800 dark:text-stone-200">{item.topic.priority}</strong>
+                      <div className="flex items-center justify-between pt-1 border-t border-[#C5BEAF]/50  text-xs">
+                        <span className="text-[10px] text-stone-600 ">
+                          Priority: <strong className="capitalize text-stone-800 ">{item.topic.priority}</strong>
                         </span>
                         <div className="flex items-center gap-1.5">
                           <button
                             onClick={() => handlePostpone(item, 1)}
-                            className="px-2 py-1 rounded-md text-[10px] font-semibold bg-[#EBE8E1] dark:bg-stone-800 border border-[#C5BEAF] text-stone-700 dark:text-stone-300 hover:bg-[#DFDBD1] shadow-2xs"
+                            className="px-2 py-1 rounded-md text-[10px] font-semibold bg-[#EBE8E1]  border border-[#C5BEAF] text-stone-700  hover:bg-[#DFDBD1] shadow-2xs"
                             title="Postpone by 1 day"
                           >
                             +1d
@@ -965,14 +965,14 @@ export const CalendarView: React.FC = () => {
             </div>
 
             {/* Completed Activities on this date */}
-            <div className="space-y-3 pt-3 border-t border-[#C5BEAF]/60 dark:border-stone-800">
-              <h4 className="text-xs font-bold text-stone-800 dark:text-stone-200 uppercase tracking-wider flex items-center gap-1.5">
+            <div className="space-y-3 pt-3 border-t border-[#C5BEAF]/60 ">
+              <h4 className="text-xs font-bold text-stone-800  uppercase tracking-wider flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-[#385820]" />
                 Completed on this Day ({selectedDateLogs.length})
               </h4>
 
               {selectedDateLogs.length === 0 ? (
-                <div className="p-4 rounded-xl bg-[#DFDBD1]/50 dark:bg-stone-950/40 border border-[#C5BEAF] dark:border-stone-800/80 text-center text-xs text-stone-600 dark:text-stone-400 font-medium">
+                <div className="p-4 rounded-xl bg-[#DFDBD1]/50  border border-[#C5BEAF]  text-center text-xs text-stone-600  font-medium">
                   No activity recorded on this day yet.
                 </div>
               ) : (
@@ -980,13 +980,13 @@ export const CalendarView: React.FC = () => {
                   {selectedDateLogs.map((log: ActivityLogEntry) => (
                     <div
                       key={log.id}
-                      className="p-2.5 rounded-xl bg-[#DFDBD1]/70 dark:bg-stone-950/60 border border-[#C5BEAF] dark:border-stone-800 flex items-center justify-between text-xs shadow-2xs"
+                      className="p-2.5 rounded-xl bg-[#DFDBD1]/70  border border-[#C5BEAF]  flex items-center justify-between text-xs shadow-2xs"
                     >
                       <div className="min-w-0 pr-2">
-                        <div className="font-semibold text-stone-900 dark:text-stone-100 truncate">
+                        <div className="font-semibold text-stone-900  truncate">
                           {log.topicName}
                         </div>
-                        <div className="text-[11px] text-stone-600 dark:text-stone-400 truncate">
+                        <div className="text-[11px] text-stone-600  truncate">
                           {log.subjectName}
                         </div>
                       </div>
@@ -1006,13 +1006,13 @@ export const CalendarView: React.FC = () => {
             </div>
 
             {/* Streak Milestones Badges Grid */}
-            <div className="space-y-3 pt-3 border-t border-[#C5BEAF]/60 dark:border-stone-800">
+            <div className="space-y-3 pt-3 border-t border-[#C5BEAF]/60 ">
               <div className="flex items-center justify-between">
-                <h4 className="text-xs font-bold text-stone-800 dark:text-stone-200 uppercase tracking-wider flex items-center gap-1.5">
+                <h4 className="text-xs font-bold text-stone-800  uppercase tracking-wider flex items-center gap-1.5">
                   <Trophy className="w-4 h-4 text-[#C68A2C]" />
                   Streak Milestones
                 </h4>
-                <span className="text-[11px] font-semibold text-stone-600 dark:text-stone-400">
+                <span className="text-[11px] font-semibold text-stone-600 ">
                   {streakStats.milestones.filter(m => m.unlockedAt !== null).length} / {streakStats.milestones.length} Unlocked
                 </span>
               </div>
@@ -1025,13 +1025,13 @@ export const CalendarView: React.FC = () => {
                       key={m.days}
                       className={`p-2.5 rounded-xl border text-center transition-all ${
                         isUnlocked
-                          ? 'bg-[#FBF3DC] dark:bg-[#C68A2C]/15 border border-[#d9c788] dark:border-[#C68A2C]/30 text-[#8E5B13] dark:text-[#EEDDB8] shadow-xs'
-                          : 'bg-[#DFDBD1]/40 dark:bg-stone-950/40 border border-[#C5BEAF]/60 dark:border-stone-800 text-stone-400 opacity-70'
+                          ? 'bg-[#FBF3DC] border border-[#d9c788] text-[#8E5B13] shadow-xs'
+                          : 'bg-[#DFDBD1]/40  border border-[#C5BEAF]/60  text-stone-400 opacity-70'
                       }`}
                     >
                       <div className="text-xl mb-1">{m.badge}</div>
                       <div className="font-extrabold text-xs truncate">{m.days} Days</div>
-                      <div className="text-[10px] text-stone-600 dark:text-stone-400 truncate">
+                      <div className="text-[10px] text-stone-600  truncate">
                         {m.title}
                       </div>
                       {isUnlocked && (
@@ -1048,3 +1048,4 @@ export const CalendarView: React.FC = () => {
     </div>
   );
 };
+
