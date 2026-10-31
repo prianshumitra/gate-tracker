@@ -5,8 +5,6 @@ import {
   Settings as SettingsIcon,
   Calendar,
   Volume2,
-  Moon,
-  Sun,
   Database,
   Download,
   Upload,
@@ -18,9 +16,7 @@ import {
   AlertTriangle,
   Play,
   RotateCcw,
-  ShieldAlert,
-  Sliders,
-  BellRing
+  ShieldAlert
 } from 'lucide-react';
 import {
   playCheckSound,

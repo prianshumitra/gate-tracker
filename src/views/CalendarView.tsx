@@ -790,7 +790,7 @@ export const CalendarView: React.FC = () => {
                             ? 'text-white font-extrabold'
                             : isTodayDate
                             ? 'text-[#8E5B13] font-black'
-                            : ''
+                            : 'text-stone-900'
                         }`}
                       >
                         {dayNum}

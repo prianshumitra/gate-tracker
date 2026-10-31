@@ -10,7 +10,6 @@ import {
   Settings,
   X,
   Pin,
-  ChevronRight,
   ChevronLeft
 } from 'lucide-react';
 import { daysUntilExam } from '../../utils/date';
