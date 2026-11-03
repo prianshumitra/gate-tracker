@@ -85,3 +85,58 @@ export function daysUntilExam(examDateStr: string): number {
   const today = getLocalDateString();
   return Math.max(0, diffInDays(today, examDateStr));
 }
+
+export interface TimeGreeting {
+  greeting: string;
+  emoji: string;
+  period: 'morning' | 'afternoon' | 'evening' | 'night';
+  motivationalQuote: string;
+}
+
+/**
+ * Returns dynamic greeting based on current local time
+ */
+export function getTimeGreeting(date: Date = new Date()): TimeGreeting {
+  const hour = date.getHours();
+
+  if (hour >= 5 && hour < 12) {
+    return {
+      greeting: 'Good Morning',
+      emoji: '🌅',
+      period: 'morning',
+      motivationalQuote: 'Start early, stay focused. A stronger rank tomorrow.'
+    };
+  } else if (hour >= 12 && hour < 17) {
+    return {
+      greeting: 'Good Afternoon',
+      emoji: '☀️',
+      period: 'afternoon',
+      motivationalQuote: 'Keep the momentum going. Consistency is key.'
+    };
+  } else if (hour >= 17 && hour < 22) {
+    return {
+      greeting: 'Good Evening',
+      emoji: '🌆',
+      period: 'evening',
+      motivationalQuote: 'Review today’s learnings and lock in your revisions.'
+    };
+  } else {
+    return {
+      greeting: 'Good Night',
+      emoji: '🌙',
+      period: 'night',
+      motivationalQuote: 'Quiet hours, deep focus. Every revision counts.'
+    };
+  }
+}
+
+/**
+ * Returns formatted date string for dashboard header e.g. "Tue, 3 Nov 2026"
+ */
+export function formatDashboardDate(date: Date = new Date()): string {
+  const weekday = date.toLocaleDateString('en-US', { weekday: 'short' });
+  const day = date.getDate();
+  const month = date.toLocaleDateString('en-US', { month: 'short' });
+  const year = date.getFullYear();
+  return `${weekday}, ${day} ${month} ${year}`;
+}

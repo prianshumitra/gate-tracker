@@ -69,6 +69,7 @@ export interface AppSettings {
   dailyGoal: number; // topics/revisions per day
   soundEnabled: boolean;
   theme: 'dark' | 'light';
+  userName?: string;
 }
 
 export interface IslandNotification {

@@ -61,7 +61,8 @@ const DEFAULT_SETTINGS: AppSettings = {
   revisionIntervals: [1, 3, 7, 14, 30],
   dailyGoal: 3,
   soundEnabled: true,
-  theme: 'light' // Default to Minimalist Cream UI
+  theme: 'light', // Default to Minimalist Cream UI
+  userName: 'Prianshu'
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);

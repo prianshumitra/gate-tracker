@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
-import { getLocalDateString } from '../utils/date';
+import { getLocalDateString, getTimeGreeting, formatDashboardDate } from '../utils/date';
 import {
   BookOpen,
   Flame,
@@ -26,11 +26,26 @@ export const DashboardView: React.FC = () => {
     flatTopics,
     streakStats,
     activityLogs,
+    settings,
     setActiveTab,
     setSelectedSubjectId
   } = useApp();
 
   const [subjectSort, setSubjectSort] = useState<'Priority' | 'Completion' | 'Urgency'>('Priority');
+  const [currentDateTime, setCurrentDateTime] = useState<Date>(() => new Date());
+  const [calendarMonthOffset, setCalendarMonthOffset] = useState<number>(0);
+
+  // Live timer: re-evaluates every 15 seconds to keep greeting and date up-to-date in real-time
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 15000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const timeGreeting = useMemo(() => getTimeGreeting(currentDateTime), [currentDateTime]);
+  const formattedDateHeader = useMemo(() => formatDashboardDate(currentDateTime), [currentDateTime]);
+  const displayName = settings?.userName || 'Prianshu';
 
   // Real syllabus topic calculations
   const totalTopics = flatTopics.length;
@@ -91,6 +106,67 @@ export const DashboardView: React.FC = () => {
     }
     return cells;
   }, [activitiesCountByDate, todayStr, streakStats]);
+
+  // Dynamic Mini-calendar date and days
+  const miniCalendarDate = useMemo(() => {
+    return new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + calendarMonthOffset, 1);
+  }, [currentDateTime, calendarMonthOffset]);
+
+  const miniCalendarMonthLabel = useMemo(() => {
+    return miniCalendarDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  }, [miniCalendarDate]);
+
+  const miniCalendarDays = useMemo(() => {
+    const year = miniCalendarDate.getFullYear();
+    const month = miniCalendarDate.getMonth();
+    const todayYear = currentDateTime.getFullYear();
+    const todayMonth = currentDateTime.getMonth();
+    const todayDay = currentDateTime.getDate();
+
+    const firstDayOfWeek = (new Date(year, month, 1).getDay() + 6) % 7; // Monday = 0
+    const daysInCurrentMonth = new Date(year, month + 1, 0).getDate();
+    const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+    const days: { day: number; isCurrentMonth: boolean; isToday: boolean; dateKey: string }[] = [];
+
+    // Prev month filler days
+    for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+      const d = daysInPrevMonth - i;
+      const prevDate = new Date(year, month - 1, d);
+      const dateKey = getLocalDateString(prevDate);
+      days.push({ day: d, isCurrentMonth: false, isToday: false, dateKey });
+    }
+
+    // Current month days
+    for (let d = 1; d <= daysInCurrentMonth; d++) {
+      const isToday = d === todayDay && month === todayMonth && year === todayYear;
+      const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      days.push({ day: d, isCurrentMonth: true, isToday, dateKey });
+    }
+
+    // Next month filler days to complete grid rows
+    const remaining = 7 - (days.length % 7);
+    if (remaining < 7) {
+      for (let d = 1; d <= remaining; d++) {
+        const nextDate = new Date(year, month + 1, d);
+        const dateKey = getLocalDateString(nextDate);
+        days.push({ day: d, isCurrentMonth: false, isToday: false, dateKey });
+      }
+    }
+
+    return days;
+  }, [miniCalendarDate, currentDateTime]);
+
+  // Dynamic Heatmap Month Labels across the 20-week window
+  const heatmapMonthLabels = useMemo(() => {
+    const labels: string[] = [];
+    const today = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      labels.push(d.toLocaleDateString('en-US', { month: 'short' }));
+    }
+    return labels;
+  }, []);
 
   const getHeatmapColor = (level: number, isFuture: boolean) => {
     if (isFuture) return 'bg-[#DDD7C9]/40 border border-[#C5BEAF]/40';
@@ -308,14 +384,14 @@ export const DashboardView: React.FC = () => {
       {/* Top Greeting Header */}
       <div>
         <span className="text-xs text-stone-500 font-medium block">
-          Tue, 23 Sep 2025
+          {formattedDateHeader}
         </span>
         <h2 className="text-2xl lg:text-3xl font-extrabold text-stone-900 tracking-tight flex items-center gap-2 mt-0.5">
-          <span>Good Evening, Prianshu</span>
-          <span className="text-xl">🍃</span>
+          <span>{timeGreeting.greeting}, {displayName}</span>
+          <span className="text-xl">{timeGreeting.emoji}</span>
         </h2>
         <p className="text-xs text-stone-500 font-normal mt-0.5">
-          Consistency today, a stronger rank tomorrow.
+          {timeGreeting.motivationalQuote}
         </p>
       </div>
 
@@ -529,22 +605,25 @@ export const DashboardView: React.FC = () => {
 
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => setActiveTab('calendar')}
-                  className="p-1 text-stone-400 hover:text-stone-700"
+                  onClick={() => setCalendarMonthOffset(prev => prev - 1)}
+                  className="p-1 text-stone-400 hover:text-stone-700 transition-colors"
+                  title="Previous month"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
                 </button>
                 <button
-                  onClick={() => setActiveTab('calendar')}
-                  className="p-1 text-stone-400 hover:text-stone-700"
+                  onClick={() => setCalendarMonthOffset(prev => prev + 1)}
+                  className="p-1 text-stone-400 hover:text-stone-700 transition-colors"
+                  title="Next month"
                 >
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={() => setActiveTab('calendar')}
-                  className="flex items-center gap-1 text-xs text-stone-600 font-medium hover:text-stone-900"
+                  className="flex items-center gap-1 text-xs text-stone-600 font-medium hover:text-stone-900 transition-colors"
+                  title="Open Full Calendar"
                 >
-                  <span>Sep 2025</span>
+                  <span>{miniCalendarMonthLabel}</span>
                   <ChevronRight className="w-3 h-3 text-stone-400" />
                 </button>
               </div>
@@ -561,59 +640,14 @@ export const DashboardView: React.FC = () => {
               <span>Sun</span>
             </div>
 
-            {/* Calendar Numbers (Sep 1 to 30) */}
+            {/* Calendar Numbers (Dynamic for Month) */}
             <div className="grid grid-cols-7 gap-y-2 text-center text-xs">
-              {[
-                { day: 1, isNextMonth: false },
-                { day: 2, isNextMonth: false },
-                { day: 3, isNextMonth: false },
-                { day: 4, isNextMonth: false },
-                { day: 5, isNextMonth: false },
-                { day: 6, isNextMonth: false },
-                { day: 7, isNextMonth: false },
-
-                // Week 2
-                { day: 8, isNextMonth: false },
-                { day: 9, isNextMonth: false },
-                { day: 10, isNextMonth: false },
-                { day: 11, isNextMonth: false },
-                { day: 12, isNextMonth: false },
-                { day: 13, isNextMonth: false },
-                { day: 14, isNextMonth: false },
-
-                // Week 3
-                { day: 15, isNextMonth: false },
-                { day: 16, isNextMonth: false },
-                { day: 17, isNextMonth: false },
-                { day: 18, isNextMonth: false },
-                { day: 19, isNextMonth: false },
-                { day: 20, isNextMonth: false },
-                { day: 21, isNextMonth: false },
-
-                // Week 4
-                { day: 22, isNextMonth: false },
-                { day: 23, isNextMonth: false, isToday: true }, // Today: active dark olive circle
-                { day: 24, isNextMonth: false },
-                { day: 25, isNextMonth: false },
-                { day: 26, isNextMonth: false },
-                { day: 27, isNextMonth: false },
-                { day: 28, isNextMonth: false },
-
-                // Week 5
-                { day: 29, isNextMonth: false },
-                { day: 30, isNextMonth: false },
-                { day: 1, isNextMonth: true },
-                { day: 2, isNextMonth: true },
-                { day: 3, isNextMonth: true },
-                { day: 4, isNextMonth: true },
-                { day: 5, isNextMonth: true },
-              ].map((item, idx) => {
+              {miniCalendarDays.map((item, idx) => {
                 const isToday = item.isToday;
-                const isNextMonth = item.isNextMonth;
+                const isCurrentMonth = item.isCurrentMonth;
 
                 // Derive activity dots from real activityLogs
-                const dateKey = `2025-09-${String(item.day).padStart(2, '0')}`;
-                const dayLogs = !isNextMonth ? activityLogs.filter(l => l.date === dateKey) : [];
+                const dayLogs = isCurrentMonth ? activityLogs.filter(l => l.date === item.dateKey) : [];
                 const hasCompleted = dayLogs.some(l => l.type === 'topic_completed');
                 const hasPartial = dayLogs.some(l => l.type === 'revision_completed');
 
@@ -624,22 +658,23 @@ export const DashboardView: React.FC = () => {
                     className="flex flex-col items-center justify-center cursor-pointer group"
                   >
                     <div
-                      className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-semibold ${isToday
+                      className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-semibold ${
+                        isToday
                           ? 'bg-[#3E5C38] text-white shadow-xs'
-                          : isNextMonth
+                          : !isCurrentMonth
                             ? 'text-stone-300'
                             : 'text-stone-700 group-hover:bg-[#DFDBD1]'
-                        }`}
+                      }`}
                     >
                       {item.day}
                     </div>
 
                     {/* Indicator Dot (dynamic from real logs only) */}
                     <div className="h-1.5 flex items-center justify-center">
-                      {!isToday && !isNextMonth && hasCompleted && (
+                      {!isToday && isCurrentMonth && hasCompleted && (
                         <span className="w-1 h-1 rounded-full bg-[#3E5C38]" />
                       )}
-                      {!isToday && !isNextMonth && !hasCompleted && hasPartial && (
+                      {!isToday && isCurrentMonth && !hasCompleted && hasPartial && (
                         <span className="w-1 h-1 rounded-full bg-[#D49A32]" />
                       )}
                     </div>
@@ -680,12 +715,9 @@ export const DashboardView: React.FC = () => {
             <div className="space-y-1.5">
               {/* Month Labels */}
               <div className="flex justify-between pl-7 text-[10px] text-stone-600 font-semibold pr-1">
-                <span>Apr</span>
-                <span>May</span>
-                <span>Jun</span>
-                <span>Jul</span>
-                <span>Aug</span>
-                <span>Sep</span>
+                {heatmapMonthLabels.map((m, idx) => (
+                  <span key={idx}>{m}</span>
+                ))}
               </div>
 
               {/* Heatmap Rows (Mon to Sun) */}
